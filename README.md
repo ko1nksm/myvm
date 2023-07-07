@@ -2,7 +2,11 @@
 
 My personal virtual machines for testing, and a build tool written in a simple and easy shell script.
 
-**This is a personal tool and at this time I do not intend to support it at this time. But you are free to use it if you wish.**
+**This is still a personal tool and at this time I do not intend to support it at this time. But you are free to use it if you wish.**
+
+## What is this?
+
+Tools for building virtual machines and my personal virtual machine environment building scripts. The goal is to automate to the installation of a basic operating system capable of ssh connections. The the virtual machine's keystroke function and OCR will be used as the technology for automated operations.
 
 ## Requirements
 
