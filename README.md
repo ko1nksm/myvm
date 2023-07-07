@@ -40,6 +40,10 @@ Usage: myvm demolish <shrc-file>
 - `vm.vnc` Enable or disable the VNC server for a virtual machine
 - `vm.disk` Add a disk
 
+## Configuration file
+
+Load `~/.config/myvm` or `~/.myvm` if exists.
+
 ## Examples
 
 ```sh

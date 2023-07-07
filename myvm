@@ -2,7 +2,7 @@
 
 set -eu
 
-# TODO: The following should be customizable.
+# The following environment variables can be overridden by ~/.config/myvm or ~/.myvm
 DISK_DIR="/var/isos"
 ROOT_PASS="pass1234"
 USER_NAME="user" USER_FULL_NAME="User" USER_PASS="pass1234"
@@ -229,10 +229,18 @@ esac
 SHRC=$1
 DOMAIN="${1%/*}${1#*/}" && DOMAIN=${DOMAIN%.shrc}
 HOSTNAME="vm-$(echo "$DOMAIN" | tr . -)"
-
 shift
 
 echo "myvm (Domain: $DOMAIN, Hostname: $HOSTNAME)"
+
+CONFIG=
+[ -f "$HOME/.myvm" ] && CONFIG="$HOME/.myvm"
+[ -f "$HOME/.config/myvm" ] && CONFIG="$HOME/.config/myvm"
+
+if [ "$CONFIG" ]; then
+  echo "Configuration file loaded from $CONFIG."
+  . "$CONFIG"
+fi
 
 # The following braces make it safe to modify the script during execution
 {
