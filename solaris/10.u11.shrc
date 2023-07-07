@@ -1,0 +1,215 @@
+do_build() {
+  vm.build --name "$DOMAIN" --osinfo solaris10 \
+    --vcpus 1 --memory 2048 --disk size=20 --video qxl \
+    --network bridge='br0',mac='52:54:00:00:05:01' \
+    --cdrom "$DISK_DIR/sol-10-u11-ga-x86-dvd.iso" \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+}
+
+do_attach_cdrom() {
+  vm.disk attach "$DISK_DIR/sol-10-u11-ga-x86-dvd.iso" hdb --type cdrom
+}
+
+do_setup() {
+  waitfor 'GNU GRUB'
+  enter
+
+  timeout 120 'Startup'
+
+  waitfor 'Enter the number of your choice.'
+  sendkey 4 # Oracle Solaris Interactive Text (Console session)
+
+  timeout 120 'Interface configuration'
+
+  waitfor 'Keyboard Layout'
+  sendkey {F2} # US-English
+
+  waitfor 'Select a Language'
+  enter 0 # English
+
+  waitfor 'The Oracle Solaris Installation Program'
+  sendkey {F2}
+
+  waitfor 'Identify This System'
+  sendkey {F2}
+
+  waitfor 'Network Connectivity'
+  sendkey {F2}
+
+  waitfor 'DHCP for'
+  sendkey {UP} {SPACE} {F2}
+
+  waitfor 'IPv[b6] for'
+  sendkey {UP} {SPACE} {F2}
+
+  waitfor 'Confirm Information for'
+  sendkey {F2}
+
+  waitfor 'Kerberos'
+  sendkey {F2}
+
+  waitfor 'Confirm Information'
+  sendkey {F2}
+
+  waitfor 'Name Service'
+  sendkey None {SPACE} {F2}
+
+  waitfor 'Confirm Information'
+  sendkey {F2}
+
+  waitfor 'NFSv4 Domain Name'
+  sendkey {F2}
+
+  waitfor 'Confirm Information for NFSv4 Domain'
+  sendkey {F2}
+
+  waitfor 'Time Zone'
+  sendkey 'other - specify time zone file' {SPACE} {F2}
+
+  waitfor 'Time Zone File'
+  sendkey 'UTC' {F2}
+
+  waitfor 'Date and Time'
+  sendkey {F2}
+
+  waitfor 'Confirm Information'
+  sendkey {F2}
+
+  waitfor 'Root Password'
+  sendkey "$ROOT_PASS" {DOWN} "$ROOT_PASS" {F2}
+
+  waitfor 'Enabling remote services'
+  sendkey {F2}
+
+  waitfor 'Provide Oracle Configuration Manager Registration Information'
+  sendkey {SPACE} {F2}
+
+  waitfor 'Proxy Server'
+  sendkey {F2}
+
+  waitfor 'Solaris Interactive Installation'
+  sendkey {F2}
+
+  waitfor 'iSCSI Installation'
+  sendkey {F2}
+
+  waitfor 'Eject a CD/DVU?D Automatically?'
+  sendkey {F2}
+
+  waitfor 'Reboot After Installation?'
+  sendkey {F2}
+
+  waitfor 'Information'
+  sendkey {F2}
+
+  waitfor 'Choose Media'
+  sendkey {F2}
+
+  waitfor 'License'
+  sendkey {F2}
+
+  waitfor 'Select Geographic Regions'
+  sendkey {RIGHT} {SPACE} # {F2}
+  repeat_sendkey 12 {DOWN} {SPACE}
+  sendkey {F2}
+
+  waitfor 'Select System Locale'
+  sendkey {F2} # C
+
+  waitfor 'Additional Products'
+  sendkey {F2}
+
+  waitfor 'Choose Filesystem Type'
+  sendkey {F2}
+
+  waitfor 'Select Software'
+  sendkey core {SPACE} {F2}
+
+  waitfor 'Warning'
+  sendkey {F2}
+
+  waitfor 'Select Disks'
+  sendkey {F4}
+
+  waitfor 'Disk Editing Options'
+  sendkey {F2}
+
+  waitfor 'Customize fdisk Partitions'
+  sendkey {F2}
+
+  waitfor 'Select Disks'
+  sendkey {F2}
+
+  waitfor 'Automatically Layout File Systems?'
+  sendkey {F4} # Manual Layout
+
+  waitfor 'File System and Disk Layout'
+  sendkey {F4} # Costomize
+
+  waitfor 'Customize Disk'
+  enter / 16384 swap 4039
+  sendkey {F2}
+
+  waitfor 'File System and Disk Layout'
+  sendkey {F2}
+
+  waitfor 'Mount Remote File Systems?'
+  sendkey {F2}
+
+  waitfor 'Profile'
+  sendkey {F2}
+
+  timeout 300 'Installation'
+
+  waitfor 'Pausing for 30 seconds'
+  enter c
+
+  waitfor 'Pausing for 90 seconds'
+  enter c
+  vm.restart
+
+  waitfor 'GNU GRUB'
+  enter
+
+  timeout 120 'Startup'
+
+  waitfor 'console login'
+  enter root "$ROOT_PASS"
+  do_attach_cdrom
+  enter 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
+  # I don't know why, but it can't be mounted in one times.
+  enter 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
+  # Once again, just to be sure.
+  enter 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
+  enter 'cd /mnt/Solaris_10/Product/'
+  enter 'yes | pkgadd -d . SUNWsshcu SUNWsshdr SUNWsshdu SUNWsshr SUNWsshu'
+  timeout 300 'SSH installation'
+  waitfor 'Installation of <SUN[WY]sshu> was successful.'
+  timeout 300 'Basic tools installation'
+  enter 'yes | pkgadd -d . SUNWbash SUNWless SUNWdoc SUNWman SUNWjman'
+  waitfor 'Installation of <SUN[WY]jman> was successful.'
+  enter '/lib/svc/method/sshd -c'
+  enter 'ed /etc/ssh/sshd_config'
+  enter ',s/PermitRootLogin no/PermitRootLogin yes/g'
+  enter '$a' 'PubkeyAuthentication yes' . w q
+  enter 'svcadm disable sendmail sendmail-client'
+  enter 'svcadm enable ssh'
+  enter 'svcadm restart ssh'
+  enter 'shutdown -y -g0 -i5'
+
+  timeout 120 'Shutdown'
+
+  waitfor 'reboot'
+
+  vm.stop
+  vm.vnc disable
+}
+
+do_poweroff() {
+  waitfor 'console login'
+  enter root "$ROOT_PASS"
+  enter 'poweroff'
+  timeout 120 'Shutdown'
+  waitfor 'reboot'
+  vm.stop
+}

@@ -1,0 +1,86 @@
+do_build() {
+  vm.build --name "$DOMAIN" --osinfo debian12 \
+    --vcpus 1 --memory 2048 --disk size=10 --network bridge='br0' \
+    --location "$DISK_DIR/debian-12.0.0-amd64-DVD-1.iso" \
+    --extra-args 'console=ttyS0,115200n8 --- console=ttyS0,115200n8' \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+}
+
+do_setup() {
+  #waitfor 'Debian GNU/Linux installer'
+  #enter I
+
+  waitfor 'Language:'
+  enter
+
+  waitfor 'Country, territory or area:'
+  enter
+
+  waitfor 'Keymap to use:'
+  enter
+
+  waitfor 'Hostname:'
+  sendkey {BS}x30
+  enter "$HOSTNAME"
+
+  waitfor 'Domain name:'
+  enter
+
+  waitfor 'Root password:'
+  enter "$ROOT_PASS"
+  waitfor 'Re-enter password to verify:'
+  enter "$ROOT_PASS"
+
+  waitfor 'Full name for the new user:'
+  enter "$USER_FULL_NAME"
+  waitfor 'Username for your account:'
+  sendkey {BS}x30
+  enter "$USER_NAME"
+  waitfor 'Choose a password for the new user:'
+  enter "$USER_PASS"
+  waitfor 'Re-enter password to verify:'
+  enter "$USER_PASS"
+
+  waitfor 'Select your time zone:'
+  enter
+
+  waitfor 'Partitioning method:'
+  enter
+
+  waitfor 'Select disk to partition:'
+  enter
+
+  waitfor 'Partitioning scheme:'
+  enter
+
+  waitfor 'Finish partitioning and write changes to disk'
+  enter
+
+  waitfor 'Write the changes to disks?'
+  enter {LEFT} # yes
+
+  timeout 300 'Base system installation'
+
+  waitfor 'Scan extra installation media?'
+  enter # no
+
+  waitfor 'Use a network mirror?'
+  enter # no
+
+  waitfor 'Participate in the package usage survey?'
+  enter # no
+
+  waitfor 'Choose software to install:'
+  sendkey {SPACE} {DOWN} {SPACE} {PAGEDOWN} {UP} {SPACE} {ENTER}
+
+  waitfor 'Install the GRUB boot loader to your primary drive?'
+  enter # yes
+
+  waitfor 'Device for boot loader installation:'
+  enter {DOWN} # primary device
+
+  waitfor 'reboot'
+  enter
+
+  vm.vnc disable
+}

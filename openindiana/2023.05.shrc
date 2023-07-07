@@ -1,0 +1,65 @@
+do_build() {
+  vm.build --name "$DOMAIN" --osinfo openindiana \
+    --vcpus 1 --memory 2048 --disk size=20 \
+    --network bridge='br0',mac='52:54:00:00:06:01' \
+    --cdrom "$DISK_DIR/OI-hipster-text-20230502.iso" \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+}
+
+do_setup() {
+  waitfor 'Welcome to illumos'
+  enter
+
+  waitfor 'To select the keyboard layout, enter a number'
+  enter
+
+  waitfor 'To select the language you wish to use, enter a number'
+  enter
+
+  waitfor 'Install OpenlIndiana'
+  enter
+
+  waitfor 'Welcome to OpenIndiana'
+  sendkey {F2}
+
+  waitfor 'Where should OpenIndiana be installed?'
+  sendkey {F2}
+
+  waitfor 'the loss of all existing data'
+  enter {RIGHT}
+
+  waitfor 'Use a partition of the disk MBR'
+  sendkey {F2} # Use the whole disk
+
+  waitfor 'Computer Name'
+  sendkey {BS}x30 "$HOSTNAME" {TAB} {F2}
+
+  waitfor 'Time Zone: Regions'
+  sendkey {F2} # UTC/GMT
+
+  waitfor 'Date and Time'
+  sendkey {F2}
+
+  waitfor 'System Root Password'
+  sendkey "$ROOT_PASS" {TAB} "$ROOT_PASS" {TAB}
+  sendkey "$USER_FULL_NAME" {TAB} "$USER_NAME" {TAB}
+  sendkey "$USER_PASS" {TAB} "$USER_PASS" {F2}
+
+  waitfor 'Installation Summary'
+  sendkey {F2}
+
+  timeout 600 'Installation'
+
+  waitfor 'Installation Complete'
+  sendkey {F8} # Reboot
+
+  vm.restart
+
+  timeout 300 'Startup'
+
+  waitfor 'console login'
+  enter "$USER_NAME" "$USER_PASS"
+  enter 'sudo poweroff' "$USER_PASS"
+
+  vm.vnc disable
+}

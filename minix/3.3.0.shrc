@@ -1,0 +1,69 @@
+do_build() {
+  vm.build --name "$DOMAIN" --osinfo detect=on,require=off \
+    --vcpus 1 --memory 256 --disk size=10 --network bridge='br0' \
+    --cdrom "$DISK_DIR/minix_R3.3.0-588a35b.iso" \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+}
+
+do_setup() {
+  waitfor 'login:'
+  enter root
+  enter setup
+
+  waitfor 'Welcome to the MINIX 3'
+  enter # If you see a colon : then you should hit ENTER to continue.
+
+  waitfor 'What type of keyboard do you have?'
+  enter # us-std
+
+  waitfor 'Press ENTER for automatic mode,'
+  enter
+
+  waitfor 'Enter the disk number to use'
+  enter
+
+  waitfor 'Enter the region number to use'
+  enter
+
+  waitfor 'Are you sure you want to continue?'
+  enter yes
+
+  waitfor 'How big do you want your [/s]home'
+  enter # disk size
+  enter y # Ok?
+
+  waitfor 'Block size in kilobytes?'
+  enter
+
+  timeout 300 "File copying"
+
+  waitfor 'Ethernet card?'
+  enter
+
+  waitfor 'Automatically using DHCP'
+  enter
+
+  waitfor 'Please type.*reboot'
+  enter reboot
+
+  vm.restart
+
+  waitfor 'login'
+  enter root
+
+  enter passwd
+  enter "$ROOT_PASS" "$ROOT_PASS"
+
+  enter 'pkgin -y update'
+
+  waitfor 'updating database'
+  enter 'pkgin -y install openssh'
+
+  waitfor 'marking openssh'
+  enter '/usr/pkg/etc/rc.d/sshd start'
+
+  waitfor 'Generating'
+  enter 'shutdown -p now'
+
+  vm.vnc disable
+}

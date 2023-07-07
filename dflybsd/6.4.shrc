@@ -1,0 +1,128 @@
+USE_UEFI=false # UEFI does not boot
+
+do_build() {
+  # See: https://www.dragonflybsd.org/docs/docs/howtos/kvmguest/
+  vm.build --name "$DOMAIN" --osinfo dragonflybsd5.6 \
+    --vcpus 1 --memory 2048 --disk size=10 --network bridge='br0' \
+    --cdrom "$DISK_DIR/dfly-x86_64-6.4.0_REL.iso" \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+}
+
+do_setup() {
+  waitfor "login:"
+  enter installer
+
+  waitfor "Welcome to the DragonFly BSD"
+  enter
+
+  waitfor "This application will install DragonFly BSD"
+  enter
+
+  if $USE_UEFI; then
+    waitfor "Do you wish to set up DragonFly BSD for a UEFI"
+    enter # UEFI
+
+    waitfor "Select a disk on which to install"
+    enter
+  else
+    waitfor "Do you wish to set up DragonFly BSD for a UEFI"
+    enter {RIGHT} # Legacy BIOS
+
+    waitfor "Select a disk on which to install"
+    enter
+
+    waitfor "Select how much of this disk"
+    enter # Entire Disk
+  fi
+
+  waitfor "Are you ABSOLUTELY SURE"
+  enter
+
+  waitfor "formatted"
+  enter
+
+  waitfor "Please select the file system"
+  enter {RIGHT}x2 # Use UFS
+
+  waitfor "Accept and Create"
+  enter {UP}x2
+
+  waitfor "Everything is now ready to install"
+  enter # Begin Installing Files
+
+  if $USE_UEFI; then
+    : # Nothing to do.
+  else
+    waitfor "You may now wish to install bootblocks"
+    enter {DOWN} # Accept and Install Bootblocks
+
+    waitfor "Bootblocks were successfully installed"
+    enter
+  fi
+
+  timeout 300 'Installation'
+
+  waitfor "DragonFly BSD has successfully been installed"
+  enter # Configure this System
+
+  {
+    waitfor "The options on this menu allow you"
+    enter {DOWN}x3 # Set root password
+
+    waitfor "Root password"
+    enter "$ROOT_PASS" "$ROOT_PASS"
+    enter
+
+    waitfor "The root password has been changed."
+    enter
+  }
+
+  {
+    waitfor "The options on this menu allow you"
+    enter {DOWN}x4 # Add a user
+
+    waitfor "add a user"
+    enter "$USER_NAME" "$USER_FULL_NAME" "$USER_PASS" "$USER_PASS"
+    sendkey {ENTER}x6
+
+    waitfor "User .* was added."
+    enter
+  }
+
+  {
+    waitfor "The options on this menu allow you"
+    enter {DOWN}x5 # Configure network interfaces
+
+    waitfor "Please select which interface"
+    enter
+
+    waitfor "Would you like to enable DHCP"
+    enter
+
+    waitfor "Ethernet"
+    enter
+  }
+
+  {
+    waitfor "The options on this menu allow you"
+    enter {DOWN}x6 # Configure hostname and domain
+
+    waitfor "Enter the Hostname"
+    enter "$HOSTNAME"
+    sendkey {ENTER}x2
+  }
+
+  waitfor "The options on this menu allow you"
+  enter {UP} # Return to Welcome Menu
+
+  waitfor "Welcome to the DragonFly BSD"
+  enter {RIGHT}x4 # Reboot this Computer
+
+  waitfor "reboot"
+  enter
+
+  waitfor "The operating system has halted."
+  enter
+
+  vm.vnc disable
+}

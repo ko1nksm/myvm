@@ -1,0 +1,243 @@
+#!/bin/sh
+
+set -eu
+
+# TODO: The following should be customizable.
+DISK_DIR="/var/isos"
+ROOT_PASS="pass1234"
+USER_NAME="user" USER_FULL_NAME="User" USER_PASS="pass1234"
+DEFAULT_TIMEOUT=60
+
+if (export PATH=/dev/null; shopt -s expand_aliases 2>/dev/null); then
+  shopt -s expand_aliases
+fi
+
+version() { echo "0.0.1"; }
+usage() {
+  echo "Usage: myvm run <shrc-file> [<tasks> | --step-on]..."
+  echo "Usage: myvm sendkey <shrc-file> [--ocr] [<keys>]..."
+  echo "Usage: myvm ocr <shrc-file>"
+  echo "Usage: myvm vnc <shrc-file> [enable | disable | display]"
+  echo "Usage: myvm demolish <shrc-file>"
+}
+
+abort() {
+  [ $# -gt 0 ] && echo "$1" >&2
+  exit 1
+}
+
+step_mode=false
+step_on() {
+  step_mode=true
+}
+
+sendkey() {
+  [ $# -eq 0 ] && return 0
+  if $step_mode; then
+    while true; do
+      printf '%s' "Send keys '$*'? [Y/s/a/o or ? for help]: "
+      read -r ans
+      case ${ans:-y} in
+        [yY]*) break ;;
+        [sS]*) return 0 ;;
+        [aA]*) step_mode=false && break ;;
+        [oO]*) cmd_ocr ;;
+        '?'*) echo "Help: [Y]es / [S]kip / Yes to [A]ll / [O]CR" ;;
+      esac
+    done
+  else
+    echo "Send keys '$*'"
+  fi
+
+  ./libexec/sendkey.sh "$DOMAIN" "$@"
+}
+
+repeat_sendkey() {
+  eval "shift; set --$(printf "%${1}s" | sed 's/ / "$@"/g')"
+  sendkey "$@"
+}
+
+enter() {
+  for i in "$@"; do
+    set -- "$@" "$i" {ENTER}
+    shift
+  done
+  [ $# -eq 0 ] && set -- {ENTER}
+  sendkey "$@"
+}
+
+next_timeout=''
+timeout() {
+  set -- "$1" "${2:-"Time-consuming"}"
+  next_timeout="$1"
+  echo "$2 process in progress (extend the next timeout to $1 seconds)"
+}
+
+waitfor() {
+  set -- "$1" "${next_timeout:-$DEFAULT_TIMEOUT}"
+  next_timeout=''
+
+  if [ "$2" -le 60 ]; then
+    set -- "$1" "$2" 3
+  elif [ "$2" -le 300 ]; then
+    set -- "$1" "$2" 5
+  else
+    set -- "$1" "$2" 10
+  fi
+
+  printf '%s' "Waiting for '$1' "
+  start=$(date +%s) && end=$start
+  while [ "$end" -le $((start + $2)) ]; do
+    printf '.'
+    if ./libexec/ocr.sh "$DOMAIN" | grep -qiE "$1"; then
+      echo " [Found]"
+      return 0
+    fi
+    sleep "$3"
+    end=$(date +%s)
+  done
+  echo " [Timeout]"
+  return 1
+}
+
+alias vm.build="vm_build"
+vm_build() {
+  virt-install "$@"
+  vm_vnc display
+}
+
+alias vm.stop="vm_stop"
+vm_stop() {
+  echo "Force stop vm"
+  virsh destroy "$DOMAIN"
+}
+
+alias vm.restart="vm_restart"
+vm_restart() {
+  echo "Waiting for restart vm"
+  state="running"
+  while [ "$state" = running ]; do
+    state=$(virsh dominfo "$DOMAIN" | sed -n 's/State: \+//p')
+    sleep 3
+  done
+  virsh start "$DOMAIN"
+}
+
+alias vm.setmem="vm_setmem"
+vm_setmem() {
+  virsh setmem "$DOMAIN" "$1" --config
+  virsh setmaxmem "$DOMAIN" "$1" --config
+}
+
+alias vm.vnc="vm_vnc"
+vm_vnc() {
+  case ${1:-display} in
+    display)
+      set -- "$(virsh vncdisplay "$DOMAIN")"
+      echo "vncserver ($DOMAIN): ${1:-unknown}"
+      ;;
+    enable | disable)
+      (
+        export MYVM_VIRSH_EDIT_COMMAND="$1-vnc"
+        export EDITOR="./libexec/virsh-edit.sh"
+        virsh edit "$DOMAIN"
+      )
+      ;;
+    *) echo "Unknown vnc command ${1:-}"
+  esac
+}
+
+alias vm.disk="vm_disk"
+vm_disk() {
+  case ${1:-} in
+    attach) shift && virsh attach-disk "$DOMAIN" "$@" ;;
+    detach) shift && virsh detach-disk "$DOMAIN" "$@" --config ;;
+    *) echo "Unknown disk command ${1:-}"
+  esac
+}
+
+cmd_run() {
+  for i in "$@"; do
+    case $i in
+      --step-on) continue ;;
+      *[!0-9a-zA-Z_]*) abort "Invalid task name '$i'" ;;
+    esac
+    eval "do_$i() { abort \"Task '$i' not defined\"; }"
+  done
+
+  . "$SHRC"
+
+  for i in "$@"; do
+    [ "$i" = '--step-on' ] && step_mode=true && continue
+    "do_${i}"
+  done
+}
+
+cmd_sendkey() {
+  ocr=''
+  for i in "$@"; do
+    case $i in
+      --ocr) ocr=1 ;;
+      *) set -- "$@" "$i" ;;
+    esac
+    shift
+  done
+  sendkey "$@"
+  if [ "$ocr" ]; then
+    cmd_ocr
+  fi
+}
+
+cmd_ocr() {
+  ./libexec/ocr.sh "$DOMAIN"
+}
+
+cmd_vnc() {
+  vm_vnc "$@"
+}
+
+cmd_demolish() {
+  while true; do
+    printf "Enter a domain name to delete a virtual machine: "
+    read -r input
+    [ "$input" = "" ] && echo "Nothing done." && return 1
+    [ "$input" = "$DOMAIN" ] || continue
+    virsh destroy "$DOMAIN" ||:
+    virsh undefine "$DOMAIN" --remove-all-storage
+    break
+  done
+}
+
+case ${1:-} in
+  run | sendkey | ocr | vnc | demolish) SUBCOMMAND=$1 ;;
+  -h | --help | help) usage && exit 0 ;;
+  -V | --version | version) version && exit 0 ;;
+  *) echo "Invalid subcommand." && usage && abort ;;
+esac
+shift
+
+case ${1:-} in
+  *.shrc)
+    if [ ! -e "$1" ]; then
+      abort "The specified shrc file does not exist."
+    fi
+    ;;
+  '') abort "Please specify the shrc file." ;;
+  *) abort "The file extension must be .shrc." ;;
+esac
+
+SHRC=$1
+DOMAIN="${1%/*}${1#*/}" && DOMAIN=${DOMAIN%.shrc}
+HOSTNAME="vm-$(echo "$DOMAIN" | tr . -)"
+
+shift
+
+echo "myvm (Domain: $DOMAIN, Hostname: $HOSTNAME)"
+
+# The following braces make it safe to modify the script during execution
+{
+  [ "$SUBCOMMAND" = "run" ] && trap 'abort Aborted.' EXIT
+  "cmd_${SUBCOMMAND}" "$@"
+  trap - EXIT
+  exit 0
+}

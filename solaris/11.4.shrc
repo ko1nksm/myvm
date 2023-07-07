@@ -1,0 +1,84 @@
+do_build() {
+  vm.build --name "$DOMAIN" --osinfo solaris11 \
+    --vcpus 1 --memory 3072 --disk size=20 \
+    --network bridge='br0',mac='52:54:00:00:05:03' \
+    --cdrom "$DISK_DIR/sol-11_4-text-x86.iso" \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+}
+
+do_setup() {
+  waitfor 'To select the keyboard layout, enter a number'
+  enter # US-English
+
+  waitfor 'To select the language you wish to use, enter a number'
+  enter # English
+
+  waitfor 'Install Oracle Solaris'
+  enter # Install Oracle Solaris
+
+  waitfor 'Welcome to Oracle Solaris'
+  sendkey {F2}
+
+  waitfor 'Select discovery method for disks'
+  sendkey {F2}
+
+  waitfor 'Where should Oracle Solaris be installed?'
+  sendkey {F2}
+
+  waitfor 'Use the entire disk'
+  sendkey {F2}
+
+  waitfor 'System Identity'
+  sendkey {BS}x10 "$HOSTNAME" {F2}
+
+  waitfor 'Network Configuration'
+  sendkey {F2}
+
+  waitfor 'Network Configuration Method'
+  sendkey {F2} # DHCP
+
+  waitfor 'Time Zone: Regions'
+  sendkey {F2} # UTC/GMT
+
+  waitfor 'Locale: Language'
+  sendkey {F2} # English
+
+  waitfor 'Locale: Territory'
+  sendkey {F2} # en_US.UTF-8
+
+  waitfor 'Date and Time'
+  sendkey {F2}
+
+  waitfor 'Keyboard'
+  sendkey {F2}
+
+  waitfor 'Users'
+  sendkey "$ROOT_PASS" {TAB} "$ROOT_PASS" {TAB}
+  sendkey "$USER_FULL_NAME" {TAB} "$USER_NAME" {TAB}
+  sendkey "$USER_PASS" {TAB} "$USER_PASS" {F2}
+
+  waitfor 'Support - Registration'
+  sendkey {F2}
+
+  waitfor 'Installation Summary'
+  sendkey {F2}
+
+  timeout 900 'Installation'
+
+  waitfor 'Installation Complete'
+  sendkey {F8} # Reboot
+
+  timeout 300 'Rebooting'
+
+  waitfor 'console login'
+  enter "$USER_NAME" "$USER_PASS"
+  enter 'sudo poweroff' "$USER_PASS"
+
+  vm.vnc disable
+}
+
+do_poweroff() {
+  waitfor 'console login'
+  enter "$USER_NAME" "$USER_PASS"
+  enter 'sudo poweroff' "$USER_PASS"
+}
