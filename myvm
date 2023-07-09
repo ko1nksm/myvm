@@ -97,7 +97,7 @@ waitfor() {
   start=$(date +%s) && end=$start
   while [ "$end" -le $((start + $2)) ]; do
     printf '.'
-    if ocr | grep -qiE "$1"; then
+    if ocr | match "$1"; then
       echo " [Found]"
       return 0
     fi
@@ -105,6 +105,15 @@ waitfor() {
     end=$(date +%s)
   done
   echo " [Timeout]"
+  return 1
+}
+
+match() {
+  set -- "$(printf '%s' "$1" | tr -s '\n' ' ')"
+  set -- "$1" "$(tr -s '\n' ' ')"
+  case $2 in
+    *"$1"*) return 0
+  esac
   return 1
 }
 
@@ -117,8 +126,7 @@ spelling_correction() {
 }
 
 postfilter() {
-  tr -cs 'a-zA-Z0-9' ' ' | spelling_correction
-  echo
+  LANG=C tr -cs '[:print:]\n' ' ' | grep . | spelling_correction
 }
 
 ocr() {
@@ -296,6 +304,7 @@ if [ "$CONFIG" ]; then
   echo "Configuration file loaded from $CONFIG."
   . "$CONFIG"
 fi
+echo
 
 # The following braces make it safe to modify the script during execution
 {
