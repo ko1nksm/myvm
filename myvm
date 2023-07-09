@@ -111,8 +111,17 @@ screenshot() {
   virsh screenshot "$DOMAIN" --file /dev/stdout
 }
 
+spelling_correction() {
+  cat
+}
+
+postfilter() {
+  tr -cs 'a-zA-Z0-9' ' ' | spelling_correction
+  echo
+}
+
 ocr() {
-  screenshot | ./libexec/ocr.sh "$DOMAIN"
+  screenshot | ./libexec/ocr.sh "$DOMAIN" | postfilter
 }
 
 alias vm.build="vm_build"
@@ -219,6 +228,7 @@ cmd_sendkey() {
 }
 
 cmd_ocr() {
+  . "$SHRC"
   ocr
 }
 

@@ -10,8 +10,4 @@ ocr() {
   tesseract --psm 6 - -
 }
 
-postfilter() {
-  grep . | tr -d '()'
-}
-
-prefilter | ocr | postfilter
+prefilter | ocr
