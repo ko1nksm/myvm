@@ -25,6 +25,7 @@ commands:
   ss <shrc-file>
   vnc <shrc-file> [enable | disable | display]
   demolish <shrc-file>
+  remote <shrc-file> [<tasks>]...
 HERE
 }
 
@@ -252,8 +253,18 @@ cmd_demolish() {
   done
 }
 
+cmd_remote() {
+  {
+    cat "$SHRC"
+    for i in "$@"; do
+      echo "remote_$i() { echo \"Remote task '$i' not defined\" >&2; exit 1; }"
+      echo "remote_$1"
+    done
+  } | ssh "$HOSTNAME" sh
+}
+
 case ${1:-} in
-  run | enter | sendkey | ss | ocr | vnc | demolish) SUBCOMMAND=$1 ;;
+  run | enter | sendkey | ss | ocr | vnc | demolish | remote) SUBCOMMAND=$1 ;;
   -h | --help | help) usage && exit 0 ;;
   -V | --version | version) version && exit 0 ;;
   *) echo "Invalid subcommand." && usage && abort ;;
