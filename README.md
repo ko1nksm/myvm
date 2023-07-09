@@ -31,11 +31,28 @@ Usage: myvm demolish <shrc-file>
 ## DSL for building virtual machines
 
 - `waitfor <regexp>` Wait for text to be output.
-- `sendkey [string]...` Send Key corresponding to each character
-- `enter [string]...` Enter a string. The end of the string contains a newline
-- `repeat_sendkey <n> [string]...` Repeat the specified strings
+- `sendkey [keys]...` Send Key corresponding to each character
+- `enter [keys]...` Enter a string. The end of the string contains a newline
+- `repeat_sendkey <n> [keys]...` Repeat the specified strings
 - `timeout <seconds>` Extends the timeout for the next `waitfor`
 - `step_on`  Turn on step execution for debugging
+
+keys:
+
+  - Special key
+    - `{F1}` `{F2}` `{F3}` `{F4}` `{F5}` `{F6}` `{F7}` `{F8}` `{F9}` `{F10}` `{F11}` `{F12}`
+    - `{UP}` `{DOWN}` `{LEFT}` `{RIGHT}` `{ENTER}` `{TAB}` `{HOME}` `{END}` `{PAGEDOWN}` `{PAGEUP}`
+    - `{BS}` `{DEL}` `{INSERT}` `{CAPSLOCK}` `{SCROLLLOCK}` `{SYSRQ}` `{BREAK}` `{SPACE}`
+  - Repeat special key
+    - `{<special key>}x<N>` - e.g `{DOWN}x10`
+  - Key with modifier
+    - `{ALT}-A` ... `{ALT}-Z`, `{ALT}-0` ... `{ALT}-9`
+    - `{CTRL}-A` ... `{CTRL}-Z`, `{CTRL}-0` ... `{CTRL}-9`
+    - `{ALT+CTRL}-A` ... `{ALT+CTRL}-Z`, `{ALT+CTRL}-0` ... `{ALT+CTRL}-9`
+    - `{CTRL+ALT}-A` ... `{CTRL+ALT}-Z`, `{CTRL+ALT}-0` ... `{CTRL+ALT}-9`
+  - Wait N seconds
+    - `{0}` ... `{9}`
+  - Other strings are treated as normal keystrokes.
 
 ## Functions to manipulate virtual machines
 
