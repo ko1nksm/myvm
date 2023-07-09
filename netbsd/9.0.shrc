@@ -1,0 +1,115 @@
+do_build() {
+  vm.build --name "$DOMAIN" --osinfo netbsd9.0 \
+    --vcpus 1 --memory 2048 --disk size=10 \
+    --network bridge='br0',mac='52:54:00:00:02:40' \
+    --cdrom "$DISK_DIR/NetBSD-9.0-amd64.iso" \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+}
+
+do_setup() {
+  waitfor "install NetBSD"
+  enter
+
+  waitfor "Keyboard type"
+  enter
+
+  waitfor "NetBSD-9.0 Install System"
+  enter
+
+  waitfor "Shall we continue?"
+  enter b # Yes
+step_on
+  waitfor "Available disks"
+  enter
+
+  waitfor "partitioning scheme"
+  enter
+
+  waitfor "This disk matches the following BIOS disk:"
+  enter
+
+  waitfor "NetBSD partitions"
+  enter b # Use default partition sizes
+
+  waitfor "Partition sizes ok"
+  enter
+
+  waitfor "Shall we continue?"
+  enter b # Yes
+
+  waitfor "Bootblocks selection"
+  enter
+
+  waitfor "Select your distribution"
+  enter c # Minimal installation
+
+  waitfor "Install from"
+  enter # CD-ROM / DVD / install image media
+
+  waitfor "The extraction of the selected sets for NetBSD-9.0 is complete."
+  enter
+
+  {
+    waitfor "Configure the additional items as needed."
+    enter a # Configure network
+
+    waitfor "Which network device would you like to use?"
+    enter
+
+    waitfor "Network media type"
+    enter # autoselect
+
+    waitfor "Perform autoconfiguration?"
+    enter # Yes
+
+    waitfor "The following are the values you entered."
+    enter # Yes
+
+    waitfor "do you want it installed in"
+    enter # Yes
+  }
+
+  {
+    waitfor "Configure the additional items as needed."
+    enter d # Change root password
+
+    waitfor "Do you want to set a root password for the system now?"
+    enter # Yes
+
+    waitfor "Changing local password for root."
+    enter "$ROOT_PASS" "$ROOT_PASS"
+  }
+
+  {
+    waitfor "Configure the additional items as needed."
+    enter g # Enable sshd
+  }
+
+  {
+    waitfor "Configure the additional items as needed."
+    enter o # Add a user
+
+    waitfor "username to add"
+    enter "$USER_NAME"
+
+    waitfor "Do you wish to add this user to group wheel?"
+    enter # Yes
+
+    waitfor "User shell"
+    enter # /bin/sh
+
+    waitfor "Changing local password for"
+    enter "$USER_PASS" "$USER_PASS"
+  }
+
+  waitfor "Configure the additional items as needed."
+  enter x # Finished configuring
+
+  waitfor "The installation of NetBSD-9.0 is now complete."
+  enter
+
+  waitfor "NetBSD-9.0 Install System"
+  enter d # Reboot the computer
+
+  vm.vnc disable
+}
