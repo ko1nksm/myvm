@@ -89,12 +89,26 @@ define_special_keymap() {
   keymap 'SYSRQ:KEY_SYSRQ' 'BREAK:KEY_BREAK' 'SPACE:KEY_SPACE'
 }
 
+define_modifier_keymap() {
+  keymap() {
+    while [ $# -gt 0 ]; do
+      echo "    '${1%:*}') virsh_sendkey ${1##*:} \"KEY_\$2\" ;;"
+      shift
+    done
+  }
+
+  keymap 'ALT:KEY_LEFTALT' 'CTRL:KEY_LEFTCTRL'
+  keymap 'ALT+CTRL:KEY_LEFTALT KEY_LEFTCTRL'
+  keymap 'CTRL+ALT:KEY_LEFTCTRL KEY_LEFTALT'
+}
+
 define_send_normal_key() {
   echo 'send_normal_key() {'
   echo '  while [ "$1" ]; do'
   echo '    set -- "${1%"${1#?}"}" "${1#?}"'
   echo '    case $1 in'
   define_keymap
+  echo '      *) echo "Unknown normal key" && exit 1'
   echo '    esac'
   echo '    set -- "$2"'
   echo '  done'
@@ -107,9 +121,20 @@ define_send_special_key() {
   echo '  while [ $2 -gt 0 ]; do'
   echo '    case $1 in'
   define_special_keymap
+  echo '      *) echo "Unknown special key" && exit 1'
   echo '    esac'
   echo '    set -- "$1" $(($2 - 1))'
   echo '  done'
+  echo '}'
+}
+
+define_send_key_with_modifier() {
+  echo 'send_key_with_modifier() {'
+  echo '  set -- "${1#?}" "$2" && set -- "${1%?}" "$2"'
+  echo '  case $1 in'
+  define_modifier_keymap
+  echo '    *) echo "Unknown modifier key" && exit 1'
+  echo '  esac'
   echo '}'
 }
 
@@ -122,6 +147,9 @@ sendkey() {
       '{'*'}x'[0-9] | '{'*'}x'[0-9][0-9])
         send_special_key "${1%x*}" "${1#*x}"
         ;;
+      '{'*'}-'[A-Z0-9])
+        send_key_with_modifier "${1%-*}" "${1#*-}"
+        ;;
       *) send_normal_key "$1" ;;
     esac
     sleep 0.5
@@ -131,6 +159,7 @@ sendkey() {
 
 eval "$(define_send_normal_key)"
 eval "$(define_send_special_key)"
+eval "$(define_send_key_with_modifier)"
 
 wait_key() {
   set -- "${1#?}" && set -- "${1%?}"
