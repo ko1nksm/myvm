@@ -2,10 +2,6 @@
 
 set -eu
 
-screenshot() {
-  virsh screenshot "$1" --file /dev/stdout
-}
-
 prefilter() {
   gm convert - -colorspace Gray -resize 200% -
 }
@@ -18,4 +14,4 @@ postfilter() {
   grep . | tr -d '()'
 }
 
-screenshot "$1" | prefilter | ocr | postfilter
+prefilter | ocr | postfilter

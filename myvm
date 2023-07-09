@@ -14,12 +14,18 @@ fi
 
 version() { echo "0.0.1"; }
 usage() {
-  echo "Usage: myvm run <shrc-file> [<tasks> | --step-on]..."
-  echo "Usage: myvm enter <shrc-file> [--ocr] [<keys>]..."
-  echo "Usage: myvm sendkey <shrc-file> [--ocr] [<keys>]..."
-  echo "Usage: myvm ocr <shrc-file>"
-  echo "Usage: myvm vnc <shrc-file> [enable | disable | display]"
-  echo "Usage: myvm demolish <shrc-file>"
+  cat <<HERE
+Usage: myvm <command> <shrc-file> [<args>]...
+
+commands:
+  run <shrc-file> [<tasks> | --step-on]...
+  enter <shrc-file> [--ocr] [<keys>]...
+  sendkey <shrc-file> [--ocr] [<keys>]...
+  ocr <shrc-file>
+  ss <shrc-file>
+  vnc <shrc-file> [enable | disable | display]
+  demolish <shrc-file>
+HERE
 }
 
 abort() {
@@ -90,7 +96,7 @@ waitfor() {
   start=$(date +%s) && end=$start
   while [ "$end" -le $((start + $2)) ]; do
     printf '.'
-    if ./libexec/ocr.sh "$DOMAIN" | grep -qiE "$1"; then
+    if ocr | grep -qiE "$1"; then
       echo " [Found]"
       return 0
     fi
@@ -99,6 +105,14 @@ waitfor() {
   done
   echo " [Timeout]"
   return 1
+}
+
+screenshot() {
+  virsh screenshot "$DOMAIN" --file /dev/stdout
+}
+
+ocr() {
+  screenshot | ./libexec/ocr.sh "$DOMAIN"
 }
 
 alias vm.build="vm_build"
@@ -205,7 +219,11 @@ cmd_sendkey() {
 }
 
 cmd_ocr() {
-  ./libexec/ocr.sh "$DOMAIN"
+  ocr
+}
+
+cmd_ss() {
+  screenshot | img2sixel
 }
 
 cmd_vnc() {
@@ -225,7 +243,7 @@ cmd_demolish() {
 }
 
 case ${1:-} in
-  run | enter | sendkey | ocr | vnc | demolish) SUBCOMMAND=$1 ;;
+  run | enter | sendkey | ss | ocr | vnc | demolish) SUBCOMMAND=$1 ;;
   -h | --help | help) usage && exit 0 ;;
   -V | --version | version) version && exit 0 ;;
   *) echo "Invalid subcommand." && usage && abort ;;
