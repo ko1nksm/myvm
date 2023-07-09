@@ -15,6 +15,7 @@ fi
 version() { echo "0.0.1"; }
 usage() {
   echo "Usage: myvm run <shrc-file> [<tasks> | --step-on]..."
+  echo "Usage: myvm enter <shrc-file> [--ocr] [<keys>]..."
   echo "Usage: myvm sendkey <shrc-file> [--ocr] [<keys>]..."
   echo "Usage: myvm ocr <shrc-file>"
   echo "Usage: myvm vnc <shrc-file> [enable | disable | display]"
@@ -173,6 +174,21 @@ cmd_run() {
   done
 }
 
+cmd_enter() {
+  ocr=''
+  for i in "$@"; do
+    case $i in
+      --ocr) ocr=1 ;;
+      *) set -- "$@" "$i" ;;
+    esac
+    shift
+  done
+  enter "$@"
+  if [ "$ocr" ]; then
+    cmd_ocr
+  fi
+}
+
 cmd_sendkey() {
   ocr=''
   for i in "$@"; do
@@ -209,7 +225,7 @@ cmd_demolish() {
 }
 
 case ${1:-} in
-  run | sendkey | ocr | vnc | demolish) SUBCOMMAND=$1 ;;
+  run | enter | sendkey | ocr | vnc | demolish) SUBCOMMAND=$1 ;;
   -h | --help | help) usage && exit 0 ;;
   -V | --version | version) version && exit 0 ;;
   *) echo "Invalid subcommand." && usage && abort ;;
