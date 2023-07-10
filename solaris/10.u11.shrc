@@ -7,7 +7,7 @@ do_build() {
 }
 
 do_attach_cdrom() {
-  vm.disk attach "$DISK_DIR/sol-10-u11-ga-x86-dvd.iso" hdb --type cdrom
+  vm.attach_disk "$DISK_DIR/sol-10-u11-ga-x86-dvd.iso" hdb --type cdrom
 }
 
 do_setup() {
@@ -39,7 +39,7 @@ do_setup() {
   waitfor 'DHCP for'
   sendkey {UP} {SPACE} {F2}
 
-  waitfor 'IPv[b6] for'
+  waitfor 'IPv6 for'
   sendkey {UP} {SPACE} {F2}
 
   waitfor 'Confirm Information for'
@@ -93,7 +93,7 @@ do_setup() {
   waitfor 'iSCSI Installation'
   sendkey {F2}
 
-  waitfor 'Eject a CD/DVU?D Automatically?'
+  waitfor 'Eject a CD/DVD Automatically?'
   sendkey {F2}
 
   waitfor 'Reboot After Installation?'
@@ -184,10 +184,10 @@ do_setup() {
   enter 'cd /mnt/Solaris_10/Product/'
   enter 'yes | pkgadd -d . SUNWsshcu SUNWsshdr SUNWsshdu SUNWsshr SUNWsshu'
   timeout 300 'SSH installation'
-  waitfor 'Installation of <SUN[WY]sshu> was successful.'
+  waitfor 'Installation of <SUNWsshu> was successful.'
   timeout 300 'Basic tools installation'
   enter 'yes | pkgadd -d . SUNWbash SUNWless SUNWdoc SUNWman SUNWjman'
-  waitfor 'Installation of <SUN[WY]jman> was successful.'
+  waitfor 'Installation of <SUNWjman> was successful.'
   enter '/lib/svc/method/sshd -c'
   enter 'ed /etc/ssh/sshd_config'
   enter ',s/PermitRootLogin no/PermitRootLogin yes/g'
@@ -212,4 +212,12 @@ do_poweroff() {
   timeout 120 'Shutdown'
   waitfor 'reboot'
   vm.stop
+}
+
+spelling_correction() {
+  sed '
+    s/IPvb/IPv6/g
+    s/DVUD/DVD/g
+    s/SUNY/SUNW/g
+  '
 }

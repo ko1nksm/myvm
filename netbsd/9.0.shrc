@@ -18,7 +18,7 @@ do_setup() {
 
   waitfor "Shall we continue?"
   enter b # Yes
-step_on
+
   waitfor "Available disks"
   enter
 

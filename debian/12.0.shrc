@@ -7,10 +7,7 @@ do_build() {
 }
 
 do_setup() {
-  #waitfor 'Debian GNU/Linux installer'
-  #enter I
-
-  waitfor 'Language:'
+  waitfor 'Choose the language'
   enter
 
   waitfor 'Country, territory or area:'

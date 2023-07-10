@@ -3,20 +3,24 @@ do_build() {
     --vcpus 1 --memory 256 --disk size=10 --network bridge='br0' \
     --cdrom "$DISK_DIR/minix_R3.3.0-588a35b.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
+
+  waitfor 'Regular MINIX 3'
+  enter
+
 }
 
 do_setup() {
-  waitfor 'login:'
+  waitfor 'login'
   enter root
   enter setup
 
   waitfor 'Welcome to the MINIX 3'
   enter # If you see a colon : then you should hit ENTER to continue.
 
-  waitfor 'What type of keyboard do you have?'
+  waitfor 'What type of keyboard do you have'
   enter # us-std
 
-  waitfor 'Press ENTER for automatic mode,'
+  waitfor 'Press ENTER for automatic mode'
   enter
 
   waitfor 'Enter the disk number to use'
@@ -25,25 +29,25 @@ do_setup() {
   waitfor 'Enter the region number to use'
   enter
 
-  waitfor 'Are you sure you want to continue?'
+  waitfor 'Are you sure you want to continue'
   enter yes
 
-  waitfor 'How big do you want your [/s]home'
+  waitfor 'How big do you want your /home'
   enter # disk size
   enter y # Ok?
 
-  waitfor 'Block size in kilobytes?'
+  waitfor 'Block size in kilobytes'
   enter
 
   timeout 300 "File copying"
 
-  waitfor 'Ethernet card?'
+  waitfor 'Ethernet card'
   enter
 
   waitfor 'Automatically using DHCP'
   enter
 
-  waitfor 'Please type.*reboot'
+  waitfor "Please type 'reboot"
   enter reboot
 
   vm.restart
@@ -66,4 +70,10 @@ do_setup() {
   enter 'shutdown -p now'
 
   vm.vnc disable
+}
+
+spelling_correction() {
+  sed '
+    s|shome|/home|g
+  '
 }

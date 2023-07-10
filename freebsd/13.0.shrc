@@ -1,8 +1,8 @@
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo freebsd13.1 \
+  vm.build --name "$DOMAIN" --osinfo freebsd13.0 \
     --vcpus 1 --memory 2048 --disk size=10 \
-    --network bridge='br0',mac='52:54:00:00:01:55' \
-    --cdrom "$DISK_DIR/FreeBSD-13.2-RELEASE-amd64-disc1.iso" \
+    --network bridge='br0',mac='52:54:00:00:01:53' \
+    --cdrom "$DISK_DIR/FreeBSD-13.0-RELEASE-amd64-disc1.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
   waitfor "Boot Multi user"

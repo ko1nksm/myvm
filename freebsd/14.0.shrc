@@ -1,11 +1,11 @@
 do_build() {
   vm.build --name "$DOMAIN" --osinfo freebsd13.1 \
     --vcpus 1 --memory 2048 --disk size=10 \
-    --network bridge='br0',mac='52:54:00:00:01:55' \
-    --cdrom "$DISK_DIR/FreeBSD-13.2-RELEASE-amd64-disc1.iso" \
+    --network bridge='br0',mac='52:54:00:00:01:56' \
+    --cdrom "$DISK_DIR/FreeBSD-14.0-CURRENT-amd64-20230622-b95d2237af40-263748-disc1.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  waitfor "Boot Multi user"
+  waitfor "Boot Installer"
   enter
 }
 
@@ -37,37 +37,40 @@ do_setup() {
   waitfor "commit your changes"
   enter
 
-  waitfor "Please select a password"
-  enter "$ROOT_PASS" "$ROOT_PASS"
+  waitfor "Changing local password for root"
+  enter "$ROOT_PASS"
+
+  waitfor "Retype New Password"
+  enter "$ROOT_PASS"
 
   waitfor "Please select a network interface"
   enter
 
-  waitfor "configure IPv4"
+  waitfor "IPv4 for this interface"
   sendkey y
 
-  waitfor "DHCP to configure this"
+  waitfor "Would you like to use DHCP"
   sendkey y
 
-  waitfor "configure IPv6"
+  waitfor "IPv6 for this interface"
   sendkey y
 
-  waitfor "stateless address"
+  waitfor "SLAARC"
   sendkey y
 
   waitfor "Resolver Configuration"
   enter
 
   waitfor "Select a region"
-  enter 0 # UTC
+  enter {END} # UTC
 
-  waitfor "Does the abbreviation 'UTC' look reasonable"
+  waitfor "Does the abbreviation 'UTC' look reasonable?"
   sendkey y
 
-  waitfor "Month Year"
+  waitfor "Date"
   enter # Skip
 
-  waitfor "Set Time"
+  waitfor "Time"
   enter # Skip
 
   waitfor "Choose the services you would like to be started at boot"
@@ -123,7 +126,9 @@ do_setup() {
 
   waitfor "Lock out the account after creation"
   enter # no
+}
 
+do_next() {
   waitfor "OK? (yes/no)"
   enter yes
 
@@ -146,6 +151,8 @@ spelling_correction() {
   sed '
     s/Helcome/Welcome/g
     s/Houw/How/g
+    s/schenme/scheme/g
+    s/Tinel/Time/g
     s/DK?/OK?/g
     s/nouw/now/g
   ' | tr '"' "'"

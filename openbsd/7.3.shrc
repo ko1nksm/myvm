@@ -6,11 +6,11 @@ do_build() {
     --controller type=scsi,driver.iommu=on --boot cdrom \
     --disk "$DISK_DIR/install73.iso",device=cdrom,bus=scsi \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
-  vm.disk detach "/var/isos/install73.iso"
+  vm.detach_disk "/var/isos/install73.iso"
 }
 
 do_setup() {
-  waitfor "[WJ]elcome to the OpenBSD"
+  waitfor "Welcome to the OpenBSD"
   enter "I"
 
   waitfor "Choose your keyboard layout"
@@ -19,13 +19,13 @@ do_setup() {
   waitfor "System hostname"
   enter "$HOSTNAME"
 
-  waitfor "[nm]etwork interface"
+  waitfor "network interface"
   enter
 
-  waitfor "IP[vu]4 address for"
+  waitfor "IPv4 address for"
   enter autoconf
 
-  waitfor "IP[vu].?6 address for"
+  waitfor "IPv6 address for"
   enter autoconf
 
   waitfor "Network interface to configure?"
@@ -46,10 +46,10 @@ do_setup() {
   waitfor "Setup a user"
   enter "$USER_NAME"
 
-  waitfor "Full name for user user?"
+  waitfor "Full name for * user?"
   enter "$USER_FULL_NAME"
 
-  waitfor "Password for .* user?"
+  waitfor "Password for * user?"
   enter "$USER_PASS" "$USER_PASS"
 
   waitfor "Allow root ssh login"
@@ -64,10 +64,10 @@ do_setup() {
   waitfor "Which disk is the root disk"
   enter
 
-  waitfor 'Use Whole disk MBR'
+  waitfor 'Use (W)hole disk MBR'
   enter
 
-  waitfor 'Auto layout'
+  waitfor 'Use (A)uto layout'
   enter c # Custom layout
   enter z # delete all partitions
   enter "a a" '' "8G" '' /
@@ -80,7 +80,7 @@ do_setup() {
   waitfor "Pathname to the sets"
   enter
 
-  waitfor "Select sets by entering a set [nm]ame"
+  waitfor "Select sets by entering a set name"
   enter "-game* -x*" done
 
   waitfor "Continue without verification"
@@ -99,4 +99,10 @@ do_setup() {
   waitfor "syncing disks"
   vm.stop
   vm.vnc disable
+}
+
+spelling_correction() {
+  sed '
+    s/IPub6/IPv6/g
+  '
 }

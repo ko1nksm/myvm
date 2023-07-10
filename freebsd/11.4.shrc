@@ -1,19 +1,19 @@
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo freebsd13.1 \
+  vm.build --name "$DOMAIN" --osinfo freebsd11.4 \
     --vcpus 1 --memory 2048 --disk size=10 \
-    --network bridge='br0',mac='52:54:00:00:01:55' \
-    --cdrom "$DISK_DIR/FreeBSD-13.2-RELEASE-amd64-disc1.iso" \
+    --network bridge='br0',mac='52:54:00:00:01:4D' \
+    --cdrom "$DISK_DIR/FreeBSD-11.4-RELEASE-amd64-disc1.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  waitfor "Boot Multi user"
+  waitfor "Boot Multi User"
   enter
 }
 
 do_setup() {
-  waitfor "Welcome to FreeBSD"
+  waitfor "Would you like to begin an installation"
   sendkey "I"
 
-  waitfor "keyboard map"
+  waitfor "standard US keyboard map"
   enter # default keymap
 
   waitfor "Please choose a hostname for this machine"
@@ -25,17 +25,22 @@ do_setup() {
   waitfor "How would you like to partition your disk"
   enter {DOWN}
 
+  waitfor "Create partitions for FreeBSD"
+  sendkey A # Auto
+
   waitfor "Would you like to use this entire disk"
   enter # Entire Disk
 
   waitfor "Select a partition scheme"
   enter # MBR
 
-  waitfor "Please review the disk setup"
-  enter
+  waitfor "Create partitions for FreeBSD"
+  sendkey F # Finish
 
   waitfor "commit your changes"
   enter
+
+  timeout 120 'Archive Extraction'
 
   waitfor "Please select a password"
   enter "$ROOT_PASS" "$ROOT_PASS"
@@ -136,7 +141,7 @@ do_setup() {
   waitfor "The installation is now finished"
   enter
 
-  waitfor "installed system now"
+  waitfor "Would you like to reboot into the installed system now"
   sendkey R # Reboot
 
   vm.vnc disable
@@ -144,9 +149,8 @@ do_setup() {
 
 spelling_correction() {
   sed '
-    s/Helcome/Welcome/g
-    s/Houw/How/g
+    s/conf igure/configure/g
+    s/IPub/IPv6/g
     s/DK?/OK?/g
-    s/nouw/now/g
   ' | tr '"' "'"
 }

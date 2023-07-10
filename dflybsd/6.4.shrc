@@ -85,7 +85,7 @@ do_setup() {
     enter "$USER_NAME" "$USER_FULL_NAME" "$USER_PASS" "$USER_PASS"
     sendkey {ENTER}x6
 
-    waitfor "User .* was added."
+    waitfor "User * was added."
     enter
   }
 
