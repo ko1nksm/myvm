@@ -51,8 +51,6 @@ keys:
     - `{CTRL}-A` ... `{CTRL}-Z`, `{CTRL}-0` ... `{CTRL}-9`
     - `{ALT+CTRL}-A` ... `{ALT+CTRL}-Z`, `{ALT+CTRL}-0` ... `{ALT+CTRL}-9`
     - `{CTRL+ALT}-A` ... `{CTRL+ALT}-Z`, `{CTRL+ALT}-0` ... `{CTRL+ALT}-9`
-  - Wait N seconds
-    - `{0}` ... `{9}`
   - Other strings are treated as normal keystrokes.
 
 ## Functions to manipulate virtual machines

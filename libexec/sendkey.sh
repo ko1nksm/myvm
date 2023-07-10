@@ -142,7 +142,6 @@ sendkey() {
   # example: send_key abcd {HOME} {TAB}x2
   while [ $# -gt 0 ]; do
     case $1 in
-      '{'[0-9]'}') wait_key "$1" ;;
       '{'*'}') send_special_key "$1" ;;
       '{'*'}x'[0-9] | '{'*'}x'[0-9][0-9])
         send_special_key "${1%x*}" "${1#*x}"
@@ -160,11 +159,6 @@ sendkey() {
 eval "$(define_send_normal_key)"
 eval "$(define_send_special_key)"
 eval "$(define_send_key_with_modifier)"
-
-wait_key() {
-  set -- "${1#?}" && set -- "${1%?}"
-  sleep "$1"
-}
 
 domain=$1
 shift
