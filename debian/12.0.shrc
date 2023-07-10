@@ -54,7 +54,7 @@ do_setup() {
   enter
 
   waitfor 'Write the changes to disks?'
-  enter {LEFT} # yes
+  sendkey {LEFT} {ENTER} # yes
 
   timeout 300 'Base system installation'
 
@@ -74,7 +74,7 @@ do_setup() {
   enter # yes
 
   waitfor 'Device for boot loader installation:'
-  enter {DOWN} # primary device
+  sendkey {DOWN} {ENTER} # primary device
 
   waitfor 'reboot'
   enter

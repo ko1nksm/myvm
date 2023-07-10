@@ -70,10 +70,13 @@ repeat_sendkey() {
 
 enter() {
   for i in "$@"; do
-    set -- "$@" "$i" {ENTER}
+    case $i in
+      '{'*) set -- "$@" '{' "${i#?}" '{ENTER}' ;;
+      *) set -- "$@" "$i" '{ENTER}' ;;
+    esac
     shift
   done
-  [ $# -eq 0 ] && set -- {ENTER}
+  [ $# -eq 0 ] && set -- '{ENTER}'
   sendkey "$@"
 }
 

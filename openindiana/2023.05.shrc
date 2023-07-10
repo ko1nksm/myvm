@@ -26,7 +26,7 @@ do_setup() {
   sendkey {F2}
 
   waitfor 'the loss of all existing data'
-  enter {RIGHT}
+  sendkey {RIGHT} {ENTER}
 
   waitfor 'Use a partition of the disk (MBR)'
   sendkey {F2} # Use the whole disk

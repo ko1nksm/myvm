@@ -55,7 +55,7 @@ define_keymap() {
   keymap '\:KEY_BACKSLASH'
   keymap '|:KEY_LEFTSHIFT KEY_BACKSLASH'
   keymap '[:KEY_LEFTBRACE'
-  keymap '}:KEY_LEFTSHIFT KEY_LEFTBRACE'
+  keymap '{:KEY_LEFTSHIFT KEY_LEFTBRACE'
   keymap ']:KEY_RIGHTBRACE'
   keymap '}:KEY_LEFTSHIFT KEY_RIGHTBRACE'
   keymap ';:KEY_SEMICOLON'

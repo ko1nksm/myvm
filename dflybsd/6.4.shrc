@@ -26,7 +26,7 @@ do_setup() {
     enter
   else
     waitfor "Do you wish to set up DragonFly BSD for a UEFI"
-    enter {RIGHT} # Legacy BIOS
+    sendkey {RIGHT} {ENTER} # Legacy BIOS
 
     waitfor "Select a disk on which to install"
     enter
@@ -42,10 +42,10 @@ do_setup() {
   enter
 
   waitfor "Please select the file system"
-  enter {RIGHT}x2 # Use UFS
+  sendkey {RIGHT}x2 {ENTER} # Use UFS
 
   waitfor "Accept and Create"
-  enter {UP}x2
+  sendkey {UP}x2 {ENTER}
 
   waitfor "Everything is now ready to install"
   enter # Begin Installing Files
@@ -54,7 +54,7 @@ do_setup() {
     : # Nothing to do.
   else
     waitfor "You may now wish to install bootblocks"
-    enter {DOWN} # Accept and Install Bootblocks
+    sendkey {DOWN} {ENTER} # Accept and Install Bootblocks
 
     waitfor "Bootblocks were successfully installed"
     enter
@@ -67,7 +67,7 @@ do_setup() {
 
   {
     waitfor "The options on this menu allow you"
-    enter {DOWN}x3 # Set root password
+    sendkey {DOWN}x3 {ENTER} # Set root password
 
     waitfor "Root password"
     enter "$ROOT_PASS" "$ROOT_PASS"
@@ -79,7 +79,7 @@ do_setup() {
 
   {
     waitfor "The options on this menu allow you"
-    enter {DOWN}x4 # Add a user
+    sendkey {DOWN}x4 {ENTER} # Add a user
 
     waitfor "add a user"
     enter "$USER_NAME" "$USER_FULL_NAME" "$USER_PASS" "$USER_PASS"
@@ -91,7 +91,7 @@ do_setup() {
 
   {
     waitfor "The options on this menu allow you"
-    enter {DOWN}x5 # Configure network interfaces
+    sendkey {DOWN}x5 {ENTER} # Configure network interfaces
 
     waitfor "Please select which interface"
     enter
@@ -105,7 +105,7 @@ do_setup() {
 
   {
     waitfor "The options on this menu allow you"
-    enter {DOWN}x6 # Configure hostname and domain
+    sendkey {DOWN}x6 {ENTER} # Configure hostname and domain
 
     waitfor "Enter the Hostname"
     enter "$HOSTNAME"
@@ -113,10 +113,10 @@ do_setup() {
   }
 
   waitfor "The options on this menu allow you"
-  enter {UP} # Return to Welcome Menu
+  sendkey {UP} {ENTER} # Return to Welcome Menu
 
   waitfor "Welcome to the DragonFly BSD"
-  enter {RIGHT}x4 # Reboot this Computer
+  sendkey {RIGHT}x4 {ENTER} # Reboot this Computer
 
   waitfor "reboot"
   enter

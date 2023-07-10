@@ -23,7 +23,7 @@ do_setup() {
   enter
 
   waitfor "How would you like to partition your disk"
-  enter {DOWN}
+  sendkey {DOWN} {ENTER}
 
   waitfor "Create partitions for FreeBSD"
   sendkey A # Auto
@@ -64,7 +64,7 @@ do_setup() {
   enter
 
   waitfor "Select a region"
-  enter 0 # UTC
+  sendkey {END} {ENTER} # UTC
 
   waitfor "Does the abbreviation UTC look reasonable"
   sendkey y
@@ -85,52 +85,24 @@ do_setup() {
   sendkey y
 
   waitfor "Add Users"
-  enter "$USER_NAME"
-
-  waitfor "Full name"
-  enter "$USER_FULL_NAME"
-
-  waitfor "Uid"
-  enter
-
-  waitfor "Login group"
-  enter
-
-  waitfor "Invite user into other groups"
-  enter
-
-  waitfor "Login class"
-  enter
-
-  waitfor "Shell"
-  enter
-
-  waitfor "Home directory"
-  enter
-
-  waitfor "Home directory permissions"
-  enter
-
-  waitfor "Use password-based authentication"
-  enter # yes
-
-  waitfor "Use an empty password"
-  enter # no
-
-  waitfor "Use a random password"
-  enter # no
-
-  waitfor "Enter password"
-  enter "$USER_PASS"
-
-  waitfor "Enter password again"
-  enter "$USER_PASS"
-
-  waitfor "Lock out the account after creation"
-  enter # no
-
-  waitfor "OK? (yes/no)"
-  enter yes
+  {
+    enter "$USER_NAME"        # Username
+    enter "$USER_FULL_NAME"   # Full name
+    enter                     # Uid
+    enter                     # Login group
+    enter                     # Invite user into other groups
+    enter                     # Login class
+    enter                     # Shell
+    enter                     # Home directory
+    enter                     # Home directory permissions
+    enter # yes               # Use password-based authentication
+    enter # no                # Use an empty password
+    enter # no                # Use a random password
+    enter "$USER_PASS"        # Enter password
+    enter "$USER_PASS"        # Enter password again
+    enter # no                # Lock out the account after creation
+    enter yes                 # OK? (yes/no)
+  }
 
   waitfor "Add another user"
   enter no
@@ -151,6 +123,5 @@ spelling_correction() {
   sed '
     s/conf igure/configure/g
     s/IPub/IPv6/g
-    s/DK?/OK?/g
   ' | tr '"' "'"
 }

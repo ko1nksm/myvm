@@ -33,7 +33,7 @@ Usage: myvm demolish <shrc-file>
 - `waitfor <pattern>` Wait for text to be output.
   - The pattern supports only "*" matching any string.
 - `sendkey [keys]...` Send Key corresponding to each character
-- `enter [keys]...` Enter a string. The end of the string contains a newline
+- `enter [words]...` Enter a string. The end of the string contains a newline
 - `repeat_sendkey <n> [keys]...` Repeat the specified strings
 - `timeout <seconds>` Extends the timeout for the next `waitfor`
 - `step_on`  Turn on step execution for debugging
