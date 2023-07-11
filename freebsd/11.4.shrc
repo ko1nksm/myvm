@@ -5,116 +5,67 @@ do_build() {
     --cdrom "$DISK_DIR/FreeBSD-11.4-RELEASE-amd64-disc1.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  waitfor "Boot Multi User"
-  enter
+  dialog "Boot Multi User" {ENTER}
 }
 
 do_setup() {
-  waitfor "Would you like to begin an installation"
-  sendkey "I"
-
-  waitfor "standard 'US' keyboard map"
-  enter # default keymap
-
-  waitfor "Please choose a hostname for this machine"
-  enter "$HOSTNAME"
-
-  waitfor "Choose optional system components to install"
-  enter
-
-  waitfor "How would you like to partition your disk"
-  sendkey {DOWN} {ENTER}
-
-  waitfor "Create partitions for FreeBSD"
-  sendkey A # Auto
-
-  waitfor "Would you like to use this entire disk"
-  enter # Entire Disk
-
-  waitfor "Select a partition scheme"
-  enter # MBR
-
-  waitfor "Create partitions for FreeBSD"
-  sendkey F # Finish
-
-  waitfor "commit your changes"
-  enter
+  dialog "Would you like to begin an installation" I
+  dialog "standard 'US' keyboard map" {ENTER} # default keymap
+  dialog "Please choose a hostname for this machine" "$HOSTNAME" {ENTER}
+  dialog "Choose optional system components to install" {ENTER}
+  dialog "How would you like to partition your disk" {DOWN} {ENTER}
+  dialog "Create partitions for FreeBSD" A # Auto
+  dialog "Would you like to use this entire disk" {ENTER} # Entire Disk
+  dialog "Select a partition scheme" {ENTER} # MBR
+  dialog "Create partitions for FreeBSD" F # Finish
+  dialog "commit your changes" {ENTER}
 
   timeout 120 'Archive Extraction'
 
-  waitfor "Please select a password"
-  enter "$ROOT_PASS" "$ROOT_PASS"
+  waitfor 'Please select a password for the system management account (root)'
+  {
+    prompt "New Password" "$ROOT_PASS"
+    prompt "Retype New Password" "$ROOT_PASS"
+  }
 
-  waitfor "Please select a network interface"
-  enter
-
-  waitfor "configure IPv4"
-  sendkey y
-
-  waitfor "DHCP to configure this"
-  sendkey y
-
-  waitfor "configure IPv6"
-  sendkey y
-
-  waitfor "stateless address"
-  sendkey y
-
-  waitfor "Resolver Configuration"
-  enter
-
-  waitfor "Select a region"
-  sendkey {END} {ENTER} # UTC
-
-  waitfor "Does the abbreviation UTC look reasonable"
-  sendkey y
-
-  waitfor "Month Year"
-  enter # Skip
-
-  waitfor "Set Time"
-  enter # Skip
-
-  waitfor "Choose the services you would like to be started at boot"
-  enter
-
-  waitfor "Choose system security hardening options"
-  enter
-
-  waitfor "users to the installed"
-  sendkey y
+  dialog "Please select a network interface" {ENTER}
+  dialog "configure IPv4" y
+  dialog "DHCP to configure this" y
+  dialog "configure IPv6" y
+  dialog "stateless address" y
+  dialog "Resolver Configuration" {ENTER}
+  dialog "Select a region" {END} {ENTER} # UTC
+  dialog "Does the abbreviation UTC look reasonable" y
+  dialog "Month Year" {ENTER} # Skip
+  dialog "Set Time" {ENTER} # Skip
+  dialog "Choose the services you would like to be started at boot" {ENTER}
+  dialog "Choose system security hardening options" {ENTER}
+  dialog "users to the installed" y
 
   waitfor "Add Users"
   {
-    enter "$USER_NAME"        # Username
-    enter "$USER_FULL_NAME"   # Full name
-    enter                     # Uid
-    enter                     # Login group
-    enter                     # Invite user into other groups
-    enter                     # Login class
-    enter                     # Shell
-    enter                     # Home directory
-    enter                     # Home directory permissions
-    enter # yes               # Use password-based authentication
-    enter # no                # Use an empty password
-    enter # no                # Use a random password
-    enter "$USER_PASS"        # Enter password
-    enter "$USER_PASS"        # Enter password again
-    enter # no                # Lock out the account after creation
-    enter yes                 # OK? (yes/no)
+    prompt 'Username' "$USER_NAME"
+    prompt 'Full name' "$USER_FULL_NAME"
+    prompt 'Uid'
+    prompt 'Login group'
+    prompt 'Invite user into other groups'
+    prompt 'Login class'
+    prompt 'Shell'
+    prompt 'Home directory'
+    prompt 'Home directory permissions'
+    prompt 'Use password-based authentication' # yes
+    prompt 'Use an empty password' # no
+    prompt 'Use a random password' # no
+    prompt 'Enter password' "$USER_PASS"
+    prompt 'Enter password again' "$USER_PASS"
+    prompt 'Lock out the account after creation' # no
+    prompt 'OK? (yes/no)' yes
+    prompt "Add another user" no
   }
 
-  waitfor "Add another user"
-  enter no
-
-  waitfor "Setup of your FreeBSD system is nearly complete"
-  enter
-
-  waitfor "The installation is now finished"
-  enter
-
-  waitfor "Would you like to reboot into the installed system now"
-  sendkey R # Reboot
+  dialog "Setup of your FreeBSD system is nearly complete" {ENTER}
+  dialog "The installation is now finished" {ENTER}
+  dialog "Would you like to reboot into the installed system now" R # Reboot
 
   vm.vnc disable
 }
@@ -122,6 +73,7 @@ do_setup() {
 spelling_correction() {
   sed '
     s/conf igure/configure/g
+    s/DK?/OK?/g
     s/IPub/IPv6/g
   ' | tr '"' "'"
 }

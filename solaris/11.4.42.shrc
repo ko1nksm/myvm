@@ -9,79 +9,41 @@ do_build() {
 }
 
 do_setup() {
-  waitfor 'To select the keyboard layout, enter a number'
-  enter # US-English
+  prompt 'To select the keyboard layout, enter a number' # US-English
+  prompt 'To select the language you wish to use, enter a number' # English
+  prompt 'Install Oracle Solaris' # Install Oracle Solaris
 
-  waitfor 'To select the language you wish to use, enter a number'
-  enter # English
-
-  waitfor 'Install Oracle Solaris'
-  enter # Install Oracle Solaris
-
-  waitfor 'Welcome to Oracle Solaris'
-  sendkey {F2}
-
-  waitfor 'Select discovery method for disks'
-  sendkey {F2}
-
-  waitfor 'Where should Oracle Solaris be installed?'
-  sendkey {F2}
-
-  waitfor 'Use the entire disk'
-  sendkey {F2}
-
-  waitfor 'System Identity'
-  sendkey {BS}x10 "$HOSTNAME" {F2}
-
-  waitfor 'Network Configuration'
-  sendkey {F2}
-
-  waitfor 'Network Configuration Method'
-  sendkey {F2} # DHCP
-
-  waitfor 'Time Zone: Regions'
-  sendkey {F2} # UTC/GMT
-
-  waitfor 'Locale: Language'
-  sendkey {F2} # English
-
-  waitfor 'Locale: Territory'
-  sendkey {F2} # en_US.UTF-8
-
-  waitfor 'Date and Time'
-  sendkey {F2}
-
-  waitfor 'Keyboard'
-  sendkey {F2}
+  dialog 'Welcome to Oracle Solaris' {F2}
+  dialog 'Select discovery method for disks' {F2}
+  dialog 'Where should Oracle Solaris be installed?' {F2}
+  dialog 'Use the entire disk' {F2}
+  dialog 'System Identity' {BS}x30 "$HOSTNAME" {F2}
+  dialog 'Network Configuration' {F2}
+  dialog 'Network Configuration Method' {F2} # DHCP
+  dialog 'Time Zone: Regions' {F2} # UTC/GMT
+  dialog 'Locale: Language' {F2} # English
+  dialog 'Locale: Territory' {F2} # en_US.UTF-8
+  dialog 'Date and Time' {F2}
+  dialog 'Keyboard' {F2}
 
   waitfor 'Users'
   sendkey "$ROOT_PASS" {TAB} "$ROOT_PASS" {TAB}
   sendkey "$USER_FULL_NAME" {TAB} "$USER_NAME" {TAB}
   sendkey "$USER_PASS" {TAB} "$USER_PASS" {F2}
 
-  waitfor 'Support - Registration'
-  sendkey {F2}
-
-  waitfor 'Installation Summary'
-  sendkey {F2}
+  dialog 'Support - Registration' {F2}
+  dialog 'Installation Summary' {F2}
 
   timeout 900 'Installation'
 
-  waitfor 'Installation Complete'
-  sendkey {F8} # Reboot
+  dialog 'Installation Complete' {F8} # Reboot
 
   timeout 300 'Rebooting'
 
-  waitfor 'console login'
-  enter "$USER_NAME" "$USER_PASS"
+  prompt 'console login' "$USER_NAME"
+  prompt "Password:" "$USER_PASS"
   enter 'sudo poweroff' "$USER_PASS"
 
   vm.setmem '3G'
   vm.vnc disable
-}
-
-do_poweroff() {
-  waitfor 'console login'
-  enter "$USER_NAME" "$USER_PASS"
-  enter 'sudo poweroff' "$USER_PASS"
 }

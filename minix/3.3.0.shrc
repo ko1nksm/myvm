@@ -4,60 +4,33 @@ do_build() {
     --cdrom "$DISK_DIR/minix_R3.3.0-588a35b.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  waitfor 'Regular MINIX 3'
-  enter
-
+  dialog 'Regular MINIX 3' {ENTER}
 }
 
 do_setup() {
-  waitfor 'login'
-  enter root
-  enter setup
-
-  waitfor 'Welcome to the MINIX 3'
-  enter # If you see a colon : then you should hit ENTER to continue.
-
-  waitfor 'What type of keyboard do you have'
-  enter # us-std
-
-  waitfor 'Press ENTER for automatic mode'
-  enter
-
-  waitfor 'Enter the disk number to use'
-  enter
-
-  waitfor 'Enter the region number to use'
-  enter
-
-  waitfor 'Are you sure you want to continue'
-  enter yes
-
-  waitfor 'How big do you want your /home'
-  enter # disk size
-  enter y # Ok?
-
-  waitfor 'Block size in kilobytes'
-  enter
+  prompt 'Type "root" at the login prompt' root
+  prompt 'type "setup" and hit enter to start the installation process' setup
+  prompt 'If you see a colon (:) then you should hit ENTER to continue' ''
+  prompt 'Keyboard type?' '' # us-std
+  prompt 'Press ENTER for automatic mode' ''
+  prompt 'Enter the disk number to use' '' # 0
+  prompt 'Enter the region number to use' '' # 0
+  prompt 'Are you sure you want to continue?' yes
+  prompt 'How big do you want your /home' '' # disk size
+  prompt 'Ok?' y
+  prompt 'Block size in kilobytes' ''
 
   timeout 300 "File copying"
 
-  waitfor 'Ethernet card'
-  enter
-
-  waitfor 'Automatically using DHCP'
-  enter
-
-  waitfor "Please type 'reboot"
-  enter reboot
+  prompt 'Ethernet card' ''
+  prompt 'Automatically using DHCP' ''
+  prompt "Please type 'reboot" reboot
 
   vm.restart
 
-  waitfor 'login'
-  enter root
+  prompt 'login' root
 
-  enter passwd
-  enter "$ROOT_PASS" "$ROOT_PASS"
-
+  enter passwd "$ROOT_PASS" "$ROOT_PASS"
   enter 'pkgin -y update'
 
   waitfor 'updating database'
@@ -74,6 +47,8 @@ do_setup() {
 
 spelling_correction() {
   sed '
+    s|"setup |"setup" |g
+    s|0k?|Ok?|g
     s|shome|/home|g
   '
 }

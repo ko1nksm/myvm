@@ -4,6 +4,8 @@ do_build() {
     --network bridge='br0',mac='52:54:00:00:05:01' \
     --cdrom "$DISK_DIR/sol-10-u11-ga-x86-dvd.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
+
+  dialog 'GNU GRUB' {ENTER}
 }
 
 do_attach_cdrom() {
@@ -11,175 +13,83 @@ do_attach_cdrom() {
 }
 
 do_setup() {
-  waitfor 'GNU GRUB'
-  enter
-
   timeout 120 'Startup'
 
-  waitfor 'Enter the number of your choice.'
-  sendkey 4 # Oracle Solaris Interactive Text (Console session)
+  # Oracle Solaris Interactive Text (Console session)
+  dialog 'Enter the number of your choice.' 4
 
   timeout 120 'Interface configuration'
 
-  waitfor 'Keyboard Layout'
-  sendkey {F2} # US-English
+  dialog 'Keyboard Layout' {F2} # US-English
+  dialog 'Select a Language' 0 {ENTER} # English
+  dialog 'The Oracle Solaris Installation Program' {F2}
+  dialog 'Identify This System' {F2}
+  dialog 'Network Connectivity' {F2}
+  dialog 'DHCP for' {UP} {SPACE} {F2}
+  dialog 'IPv6 for' {UP} {SPACE} {F2}
+  dialog 'Confirm Information for' {F2}
+  dialog 'Kerberos' {F2}
+  dialog 'Confirm Information' {F2}
+  dialog 'Name Service' None {SPACE} {F2}
+  dialog 'Confirm Information' {F2}
+  dialog 'NFSv4 Domain Name' {F2}
+  dialog 'Confirm Information for NFSv4 Domain' {F2}
+  dialog 'Time Zone' 'other - specify time zone file' {SPACE} {F2}
+  dialog 'Time Zone File' 'UTC' {F2}
+  dialog 'Date and Time' {F2}
+  dialog 'Confirm Information' {F2}
+  dialog 'Root Password' "$ROOT_PASS" {DOWN} "$ROOT_PASS" {F2}
+  dialog 'Enabling remote services' {F2}
+  dialog 'Provide Oracle Configuration Manager Registration Information' {SPACE} {F2}
+  dialog 'Proxy Server' {F2}
 
-  waitfor 'Select a Language'
-  enter 0 # English
-
-  waitfor 'The Oracle Solaris Installation Program'
-  sendkey {F2}
-
-  waitfor 'Identify This System'
-  sendkey {F2}
-
-  waitfor 'Network Connectivity'
-  sendkey {F2}
-
-  waitfor 'DHCP for'
-  sendkey {UP} {SPACE} {F2}
-
-  waitfor 'IPv6 for'
-  sendkey {UP} {SPACE} {F2}
-
-  waitfor 'Confirm Information for'
-  sendkey {F2}
-
-  waitfor 'Kerberos'
-  sendkey {F2}
-
-  waitfor 'Confirm Information'
-  sendkey {F2}
-
-  waitfor 'Name Service'
-  sendkey None {SPACE} {F2}
-
-  waitfor 'Confirm Information'
-  sendkey {F2}
-
-  waitfor 'NFSv4 Domain Name'
-  sendkey {F2}
-
-  waitfor 'Confirm Information for NFSv4 Domain'
-  sendkey {F2}
-
-  waitfor 'Time Zone'
-  sendkey 'other - specify time zone file' {SPACE} {F2}
-
-  waitfor 'Time Zone File'
-  sendkey 'UTC' {F2}
-
-  waitfor 'Date and Time'
-  sendkey {F2}
-
-  waitfor 'Confirm Information'
-  sendkey {F2}
-
-  waitfor 'Root Password'
-  sendkey "$ROOT_PASS" {DOWN} "$ROOT_PASS" {F2}
-
-  waitfor 'Enabling remote services'
-  sendkey {F2}
-
-  waitfor 'Provide Oracle Configuration Manager Registration Information'
-  sendkey {SPACE} {F2}
-
-  waitfor 'Proxy Server'
-  sendkey {F2}
-
-  waitfor 'Solaris Interactive Installation'
-  sendkey {F2}
-
-  waitfor 'iSCSI Installation'
-  sendkey {F2}
-
-  waitfor 'Eject a CD/DVD Automatically?'
-  sendkey {F2}
-
-  waitfor 'Reboot After Installation?'
-  sendkey {F2}
-
-  waitfor 'Information'
-  sendkey {F2}
-
-  waitfor 'Choose Media'
-  sendkey {F2}
-
-  waitfor 'License'
-  sendkey {F2}
-
-  waitfor 'Select Geographic Regions'
-  sendkey {RIGHT} {SPACE} # {F2}
+  dialog 'Solaris Interactive Installation' {F2} # Standard
+  dialog 'iSCSI Installation' {F2}
+  dialog 'Eject a CD/DVD Automatically?' {F2}
+  dialog 'Reboot After Installation?' {F2}
+  dialog 'Information' {F2}
+  dialog 'Choose Media' {F2}
+  dialog 'License' {F2}
+  waitfor 'Select Geographic Regions' # Select the all geographic regions
+  sendkey {RIGHT} {SPACE}
   repeat_sendkey 12 {DOWN} {SPACE}
   sendkey {F2}
+  dialog 'Select System Locale' {F2} # C
+  dialog 'Additional Products' {F2}
+  dialog 'Choose Filesystem Type' {F2} # UFS
+  dialog 'Select Software' core {SPACE} {F2}
+  dialog 'Warning' {F2}
 
-  waitfor 'Select System Locale'
-  sendkey {F2} # C
-
-  waitfor 'Additional Products'
-  sendkey {F2}
-
-  waitfor 'Choose Filesystem Type'
-  sendkey {F2}
-
-  waitfor 'Select Software'
-  sendkey core {SPACE} {F2}
-
-  waitfor 'Warning'
-  sendkey {F2}
-
-  waitfor 'Select Disks'
-  sendkey {F4}
-
-  waitfor 'Disk Editing Options'
-  sendkey {F2}
-
-  waitfor 'Customize fdisk Partitions'
-  sendkey {F2}
-
-  waitfor 'Select Disks'
-  sendkey {F2}
-
-  waitfor 'Automatically Layout File Systems?'
-  sendkey {F4} # Manual Layout
-
-  waitfor 'File System and Disk Layout'
-  sendkey {F4} # Costomize
-
+  dialog 'Select Disks' {F4}
+  dialog 'Disk Editing Options' {F2}
+  dialog 'Customize fdisk Partitions' {F2}
+  dialog 'Select Disks' {F2}
+  dialog 'Automatically Layout File Systems?' {F4} # Manual Layout
+  dialog 'File System and Disk Layout' {F4} # Costomize
   waitfor 'Customize Disk'
   enter / 16384 swap 4039
   sendkey {F2}
-
-  waitfor 'File System and Disk Layout'
-  sendkey {F2}
-
-  waitfor 'Mount Remote File Systems?'
-  sendkey {F2}
-
-  waitfor 'Profile'
-  sendkey {F2}
+  dialog 'File System and Disk Layout' {F2}
+  dialog 'Mount Remote File Systems?' {F2}
+  dialog 'Profile' {F2}
 
   timeout 300 'Installation'
 
-  waitfor 'Pausing for 30 seconds'
-  enter c
+  prompt 'Pausing for 30 seconds' c
+  prompt 'Pausing for 90 seconds' c
 
-  waitfor 'Pausing for 90 seconds'
-  enter c
   vm.restart
 
-  waitfor 'GNU GRUB'
-  enter
+  dialog 'GNU GRUB' {ENTER}
 
   timeout 120 'Startup'
 
-  waitfor 'console login'
-  enter root "$ROOT_PASS"
+  prompt 'console login' root
+  prompt "Password:" "$ROOT_PASS"
+
   do_attach_cdrom
-  enter 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
-  # I don't know why, but it can't be mounted in one times.
-  enter 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
-  # Once again, just to be sure.
+  sleep 15
+
   enter 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
   enter 'cd /mnt/Solaris_10/Product/'
   enter 'yes | pkgadd -d . SUNWsshcu SUNWsshdr SUNWsshdu SUNWsshr SUNWsshu'
@@ -203,15 +113,6 @@ do_setup() {
 
   vm.stop
   vm.vnc disable
-}
-
-do_poweroff() {
-  waitfor 'console login'
-  enter root "$ROOT_PASS"
-  enter 'poweroff'
-  timeout 120 'Shutdown'
-  waitfor 'reboot'
-  vm.stop
 }
 
 spelling_correction() {

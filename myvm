@@ -52,7 +52,7 @@ sendkey() {
         [yY]*) break ;;
         [sS]*) return 0 ;;
         [aA]*) step_mode=false && break ;;
-        [oO]*) _ocr ;;
+        [oO]*) ocr ;;
         '?'*) echo "Help: [Y]es / [S]kip / Yes to [A]ll / [O]CR" ;;
       esac
     done
@@ -78,6 +78,18 @@ enter() {
   done
   [ $# -eq 0 ] && set -- '{ENTER}'
   sendkey "$@"
+}
+
+dialog() {
+  waitfor "$1"
+  shift
+  sendkey "$@"
+}
+
+prompt() {
+  waitfor "$1"
+  shift
+  enter "$@"
 }
 
 next_timeout=''
