@@ -4,31 +4,31 @@ do_build() {
     --cdrom "$DISK_DIR/minix_R3.3.0-588a35b.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  dialog 'Regular MINIX 3' {ENTER}
+  prompt 'Regular MINIX 3' {ENTER}
 }
 
 do_setup() {
-  dialog 'Type "root" at the login prompt' root {ENTER}
-  dialog 'type "setup" and hit enter to start the installation process' setup {ENTER}
-  dialog 'If you see a colon (:) then you should hit ENTER to continue' {ENTER}
-  dialog 'Keyboard type?' {ENTER} # us-std
-  dialog 'Press ENTER for automatic mode' {ENTER}
-  dialog 'Enter the disk number to use' {ENTER} # 0
-  dialog 'Enter the region number to use' {ENTER} # 0
-  dialog 'Are you sure you want to continue?' yes {ENTER}
-  dialog 'How big do you want your /home' {ENTER} # disk size
-  dialog 'Ok?' y {ENTER}
-  dialog 'Block size in kilobytes' {ENTER}
+  prompt 'Type "root" at the login prompt' root {ENTER}
+  prompt 'type "setup" and hit enter to start the installation process' setup {ENTER}
+  prompt 'If you see a colon (:) then you should hit ENTER to continue' {ENTER}
+  prompt 'Keyboard type?' {ENTER} # us-std
+  prompt 'Press ENTER for automatic mode' {ENTER}
+  prompt 'Enter the disk number to use' {ENTER} # 0
+  prompt 'Enter the region number to use' {ENTER} # 0
+  prompt 'Are you sure you want to continue?' yes {ENTER}
+  prompt 'How big do you want your /home' {ENTER} # disk size
+  prompt 'Ok?' y {ENTER}
+  prompt 'Block size in kilobytes' {ENTER}
 
   timeout 300 "File copying"
 
-  dialog 'Ethernet card' {ENTER}
-  dialog 'Automatically using DHCP' {ENTER}
-  dialog "Please type 'reboot" reboot {ENTER}
+  prompt 'Ethernet card' {ENTER}
+  prompt 'Automatically using DHCP' {ENTER}
+  prompt "Please type 'reboot" reboot {ENTER}
 
   vm.restart
 
-  dialog 'login' root {ENTER}
+  prompt 'login' root {ENTER}
 
   enter passwd "$ROOT_PASS" "$ROOT_PASS"
   enter 'pkgin -y update'

@@ -80,7 +80,7 @@ enter() {
   sendkey "$@"
 }
 
-dialog() {
+prompt() {
   waitfor "$1"
   shift
   sendkey "$@"

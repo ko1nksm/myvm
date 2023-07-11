@@ -7,47 +7,47 @@ do_build() {
 }
 
 do_setup() {
-  dialog "Welcome to the OpenBSD" I {ENTER} # Install
-  dialog "Choose your keyboard layout" {ENTER}
-  dialog "System hostname" "$HOSTNAME" {ENTER}
-  dialog "network interface" {ENTER}
-  dialog "IPv4 address for" dhcp {ENTER}
-  dialog "IPv6 address for" autoconf {ENTER}
-  dialog "Which network interface do you wish to configure?" {ENTER}
-  dialog "Password for root account? (will not echo)" "$ROOT_PASS" {ENTER}
-  dialog "Password for root account? (again)" "$ROOT_PASS" {ENTER}
-  dialog "Start sshd" yes {ENTER}
-  dialog "Do you expect to run the X Window System" no {ENTER}
-  dialog "Change the default console to" no {ENTER}
-  dialog "Setup a user" "$USER_NAME" {ENTER}
-  dialog "Full name for * user?" "$USER_FULL_NAME" {ENTER}
-  dialog "Password for * user? (will not echo)" "$USER_PASS" {ENTER}
-  dialog "Password for * user? (again)" "$USER_PASS" {ENTER}
-  dialog "Allow root ssh login" yes {ENTER}
-  dialog "What timezone are you in" UTC {ENTER}
-  dialog "Which disk is the root disk" {ENTER}
-  dialog 'Use (W)hole disk MBR' {ENTER}
-  dialog 'create (C)ustom layout?' c {ENTER} # Custom layout
+  prompt "Welcome to the OpenBSD" I {ENTER} # Install
+  prompt "Choose your keyboard layout" {ENTER}
+  prompt "System hostname" "$HOSTNAME" {ENTER}
+  prompt "network interface" {ENTER}
+  prompt "IPv4 address for" dhcp {ENTER}
+  prompt "IPv6 address for" autoconf {ENTER}
+  prompt "Which network interface do you wish to configure?" {ENTER}
+  prompt "Password for root account? (will not echo)" "$ROOT_PASS" {ENTER}
+  prompt "Password for root account? (again)" "$ROOT_PASS" {ENTER}
+  prompt "Start sshd" yes {ENTER}
+  prompt "Do you expect to run the X Window System" no {ENTER}
+  prompt "Change the default console to" no {ENTER}
+  prompt "Setup a user" "$USER_NAME" {ENTER}
+  prompt "Full name for * user?" "$USER_FULL_NAME" {ENTER}
+  prompt "Password for * user? (will not echo)" "$USER_PASS" {ENTER}
+  prompt "Password for * user? (again)" "$USER_PASS" {ENTER}
+  prompt "Allow root ssh login" yes {ENTER}
+  prompt "What timezone are you in" UTC {ENTER}
+  prompt "Which disk is the root disk" {ENTER}
+  prompt 'Use (W)hole disk MBR' {ENTER}
+  prompt 'create (C)ustom layout?' c {ENTER} # Custom layout
   {
     enter z # delete all partitions
     enter "a a" '' "8G" '' /
     enter "a b" '' '' swap
     enter "p m" q y
   }
-  dialog "install the sets" {ENTER}
-  dialog "Pathname to the sets" {ENTER}
-  dialog "Select sets by entering a set name" "-game* -x*" "done" {ENTER}
-  dialog "Continue without verification" yes {ENTER}
+  prompt "install the sets" {ENTER}
+  prompt "Pathname to the sets" {ENTER}
+  prompt "Select sets by entering a set name" "-game* -x*" "done" {ENTER}
+  prompt "Continue without verification" yes {ENTER}
   timeout 300 'Installation'
-  dialog "Location of sets" "done" {ENTER}
+  prompt "Location of sets" "done" {ENTER}
   timeout 180 'Initialization'
-  dialog "(R)eboot?" reboot {ENTER}
+  prompt "(R)eboot?" reboot {ENTER}
 
   vm.restart
 
   timeout 300 'Rebooting'
 
-  dialog "login:" root "$ROOT_PASS" {ENTER}
+  prompt "login:" root "$ROOT_PASS" {ENTER}
   enter "shutdown -p now"
 
   vm.vnc disable

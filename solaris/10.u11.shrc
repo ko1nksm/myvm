@@ -5,7 +5,7 @@ do_build() {
     --cdrom "$DISK_DIR/sol-10-u11-ga-x86-dvd.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  dialog 'GNU GRUB' {ENTER}
+  prompt 'GNU GRUB' {ENTER}
 }
 
 do_attach_cdrom() {
@@ -16,76 +16,76 @@ do_setup() {
   timeout 120 'Startup'
 
   # Oracle Solaris Interactive Text (Console session)
-  dialog 'Enter the number of your choice.' 4
+  prompt 'Enter the number of your choice.' 4
 
   timeout 120 'Interface configuration'
 
-  dialog 'Keyboard Layout' {F2} # US-English
-  dialog 'Select a Language' 0 {ENTER} # English
-  dialog 'The Oracle Solaris Installation Program' {F2}
-  dialog 'Identify This System' {F2}
-  dialog 'Network Connectivity' {F2}
-  dialog 'DHCP for' {UP} {SPACE} {F2}
-  dialog 'IPv6 for' {UP} {SPACE} {F2}
-  dialog 'Confirm Information for' {F2}
-  dialog 'Kerberos' {F2}
-  dialog 'Confirm Information' {F2}
-  dialog 'Name Service' None {SPACE} {F2}
-  dialog 'Confirm Information' {F2}
-  dialog 'NFSv4 Domain Name' {F2}
-  dialog 'Confirm Information for NFSv4 Domain' {F2}
-  dialog 'Time Zone' 'other - specify time zone file' {SPACE} {F2}
-  dialog 'Time Zone File' 'UTC' {F2}
-  dialog 'Date and Time' {F2}
-  dialog 'Confirm Information' {F2}
-  dialog 'Root Password' "$ROOT_PASS" {DOWN} "$ROOT_PASS" {F2}
-  dialog 'Enabling remote services' {F2}
-  dialog 'Provide Oracle Configuration Manager Registration Information' {SPACE} {F2}
-  dialog 'Proxy Server' {F2}
+  prompt 'Keyboard Layout' {F2} # US-English
+  prompt 'Select a Language' 0 {ENTER} # English
+  prompt 'The Oracle Solaris Installation Program' {F2}
+  prompt 'Identify This System' {F2}
+  prompt 'Network Connectivity' {F2}
+  prompt 'DHCP for' {UP} {SPACE} {F2}
+  prompt 'IPv6 for' {UP} {SPACE} {F2}
+  prompt 'Confirm Information for' {F2}
+  prompt 'Kerberos' {F2}
+  prompt 'Confirm Information' {F2}
+  prompt 'Name Service' None {SPACE} {F2}
+  prompt 'Confirm Information' {F2}
+  prompt 'NFSv4 Domain Name' {F2}
+  prompt 'Confirm Information for NFSv4 Domain' {F2}
+  prompt 'Time Zone' 'other - specify time zone file' {SPACE} {F2}
+  prompt 'Time Zone File' 'UTC' {F2}
+  prompt 'Date and Time' {F2}
+  prompt 'Confirm Information' {F2}
+  prompt 'Root Password' "$ROOT_PASS" {DOWN} "$ROOT_PASS" {F2}
+  prompt 'Enabling remote services' {F2}
+  prompt 'Provide Oracle Configuration Manager Registration Information' {SPACE} {F2}
+  prompt 'Proxy Server' {F2}
 
-  dialog 'Solaris Interactive Installation' {F2} # Standard
-  dialog 'iSCSI Installation' {F2}
-  dialog 'Eject a CD/DVD Automatically?' {F2}
-  dialog 'Reboot After Installation?' {F2}
-  dialog 'Information' {F2}
-  dialog 'Choose Media' {F2}
-  dialog 'License' {F2}
+  prompt 'Solaris Interactive Installation' {F2} # Standard
+  prompt 'iSCSI Installation' {F2}
+  prompt 'Eject a CD/DVD Automatically?' {F2}
+  prompt 'Reboot After Installation?' {F2}
+  prompt 'Information' {F2}
+  prompt 'Choose Media' {F2}
+  prompt 'License' {F2}
   waitfor 'Select Geographic Regions' # Select the all geographic regions
   sendkey {RIGHT} {SPACE}
   repeat_sendkey 12 {DOWN} {SPACE}
   sendkey {F2}
-  dialog 'Select System Locale' {F2} # C
-  dialog 'Additional Products' {F2}
-  dialog 'Choose Filesystem Type' {F2} # UFS
-  dialog 'Select Software' core {SPACE} {F2}
-  dialog 'Warning' {F2}
+  prompt 'Select System Locale' {F2} # C
+  prompt 'Additional Products' {F2}
+  prompt 'Choose Filesystem Type' {F2} # UFS
+  prompt 'Select Software' core {SPACE} {F2}
+  prompt 'Warning' {F2}
 
-  dialog 'Select Disks' {F4}
-  dialog 'Disk Editing Options' {F2}
-  dialog 'Customize fdisk Partitions' {F2}
-  dialog 'Select Disks' {F2}
-  dialog 'Automatically Layout File Systems?' {F4} # Manual Layout
-  dialog 'File System and Disk Layout' {F4} # Costomize
+  prompt 'Select Disks' {F4}
+  prompt 'Disk Editing Options' {F2}
+  prompt 'Customize fdisk Partitions' {F2}
+  prompt 'Select Disks' {F2}
+  prompt 'Automatically Layout File Systems?' {F4} # Manual Layout
+  prompt 'File System and Disk Layout' {F4} # Costomize
   waitfor 'Customize Disk'
   enter / 16384 swap 4039
   sendkey {F2}
-  dialog 'File System and Disk Layout' {F2}
-  dialog 'Mount Remote File Systems?' {F2}
-  dialog 'Profile' {F2}
+  prompt 'File System and Disk Layout' {F2}
+  prompt 'Mount Remote File Systems?' {F2}
+  prompt 'Profile' {F2}
 
   timeout 300 'Installation'
 
-  dialog 'Pausing for 30 seconds' c {ENTER}
-  dialog 'Pausing for 90 seconds' c {ENTER}
+  prompt 'Pausing for 30 seconds' c {ENTER}
+  prompt 'Pausing for 90 seconds' c {ENTER}
 
   vm.restart
 
-  dialog 'GNU GRUB' {ENTER}
+  prompt 'GNU GRUB' {ENTER}
 
   timeout 120 'Startup'
 
-  dialog 'console login' root {ENTER}
-  dialog "Password:" "$ROOT_PASS" {ENTER}
+  prompt 'console login' root {ENTER}
+  prompt "Password:" "$ROOT_PASS" {ENTER}
 
   do_attach_cdrom
   sleep 15

@@ -5,66 +5,66 @@ do_build() {
     --cdrom "$DISK_DIR/FreeBSD-13.2-RELEASE-amd64-disc1.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  dialog "Boot Multi user" {ENTER}
+  prompt "Boot Multi user" {ENTER}
 }
 
 do_setup() {
-  dialog "Welcome to FreeBSD" I
-  dialog "keyboard map" {ENTER} # default keymap
-  dialog "Please choose a hostname for this machine" "$HOSTNAME" {ENTER}
-  dialog "Choose optional system components to install" {ENTER}
-  dialog "How would you like to partition your disk" {DOWN} {ENTER}
-  dialog "Would you like to use this entire disk" {ENTER} # Entire Disk
-  dialog "Select a partition scheme" {ENTER} # MBR
-  dialog "Please review the disk setup" {ENTER}
-  dialog "commit your changes" {ENTER}
+  prompt "Welcome to FreeBSD" I
+  prompt "keyboard map" {ENTER} # default keymap
+  prompt "Please choose a hostname for this machine" "$HOSTNAME" {ENTER}
+  prompt "Choose optional system components to install" {ENTER}
+  prompt "How would you like to partition your disk" {DOWN} {ENTER}
+  prompt "Would you like to use this entire disk" {ENTER} # Entire Disk
+  prompt "Select a partition scheme" {ENTER} # MBR
+  prompt "Please review the disk setup" {ENTER}
+  prompt "commit your changes" {ENTER}
 
   timeout 120 'Archive Extraction'
 
   waitfor 'Please select a password for the system management account (root)'
   {
-    dialog "New Password" "$ROOT_PASS" {ENTER}
-    dialog "Retype New Password" "$ROOT_PASS" {ENTER}
+    prompt "New Password" "$ROOT_PASS" {ENTER}
+    prompt "Retype New Password" "$ROOT_PASS" {ENTER}
   }
 
-  dialog "Please select a network interface" {ENTER}
-  dialog "configure IPv4" y
-  dialog "DHCP to configure this" y
-  dialog "configure IPv6" y
-  dialog "stateless address" y
-  dialog "Resolver Configuration" {ENTER}
-  dialog "Select a region" {END} {ENTER} # UTC
-  dialog "Does the abbreviation 'UTC' look reasonable" y
-  dialog "Month Year" {ENTER} # Skip
-  dialog "Set Time" {ENTER} # Skip
-  dialog "Choose the services you would like to be started at boot" {ENTER}
-  dialog "Choose system security hardening options" {ENTER}
-  dialog "users to the installed" y
+  prompt "Please select a network interface" {ENTER}
+  prompt "configure IPv4" y
+  prompt "DHCP to configure this" y
+  prompt "configure IPv6" y
+  prompt "stateless address" y
+  prompt "Resolver Configuration" {ENTER}
+  prompt "Select a region" {END} {ENTER} # UTC
+  prompt "Does the abbreviation 'UTC' look reasonable" y
+  prompt "Month Year" {ENTER} # Skip
+  prompt "Set Time" {ENTER} # Skip
+  prompt "Choose the services you would like to be started at boot" {ENTER}
+  prompt "Choose system security hardening options" {ENTER}
+  prompt "users to the installed" y
 
   waitfor "Add Users"
   {
-    dialog 'Username' "$USER_NAME" {ENTER}
-    dialog 'Full name' "$USER_FULL_NAME" {ENTER}
-    dialog 'Uid' {ENTER}
-    dialog 'Login group' {ENTER}
-    dialog 'Invite user into other groups' {ENTER}
-    dialog 'Login class' {ENTER}
-    dialog 'Shell' {ENTER}
-    dialog 'Home directory' {ENTER}
-    dialog 'Home directory permissions' {ENTER}
-    dialog 'Use password-based authentication' {ENTER} # yes
-    dialog 'Use an empty password' {ENTER} # no
-    dialog 'Use a random password' {ENTER} # no
-    dialog 'Enter password' "$USER_PASS" {ENTER}
-    dialog 'Enter password again' "$USER_PASS" {ENTER}
-    dialog 'Lock out the account after creation' {ENTER} # no
-    dialog 'OK? (yes/no)' yes {ENTER}
-    dialog "Add another user" no {ENTER}
+    prompt 'Username' "$USER_NAME" {ENTER}
+    prompt 'Full name' "$USER_FULL_NAME" {ENTER}
+    prompt 'Uid' {ENTER}
+    prompt 'Login group' {ENTER}
+    prompt 'Invite user into other groups' {ENTER}
+    prompt 'Login class' {ENTER}
+    prompt 'Shell' {ENTER}
+    prompt 'Home directory' {ENTER}
+    prompt 'Home directory permissions' {ENTER}
+    prompt 'Use password-based authentication' {ENTER} # yes
+    prompt 'Use an empty password' {ENTER} # no
+    prompt 'Use a random password' {ENTER} # no
+    prompt 'Enter password' "$USER_PASS" {ENTER}
+    prompt 'Enter password again' "$USER_PASS" {ENTER}
+    prompt 'Lock out the account after creation' {ENTER} # no
+    prompt 'OK? (yes/no)' yes {ENTER}
+    prompt "Add another user" no {ENTER}
   }
 
-  dialog "Setup of your FreeBSD system is nearly complete" {ENTER}
-  dialog "The installation is now finished" {ENTER}
-  dialog "installed system now" R # Reboot
+  prompt "Setup of your FreeBSD system is nearly complete" {ENTER}
+  prompt "The installation is now finished" {ENTER}
+  prompt "installed system now" R # Reboot
 
   vm.vnc disable
 }

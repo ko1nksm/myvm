@@ -7,33 +7,33 @@ do_build() {
 }
 
 do_setup() {
-  dialog 'Choose the language' {ENTER} # English
-  dialog 'Country, territory or area:' {ENTER} # United States
-  dialog 'Keymap to use:' {ENTER} # American English
-  dialog 'Hostname:' {BS}x30 "$HOSTNAME" {ENTER}
-  dialog 'Domain name:' {ENTER}
-  dialog 'Root password:' "$ROOT_PASS" {ENTER}
-  dialog 'Re-enter password to verify:' "$ROOT_PASS" {ENTER}
-  dialog 'Full name for the new user:' "$USER_FULL_NAME" {ENTER}
-  dialog 'Username for your account:' {BS}x30 "$USER_NAME" {ENTER}
-  dialog 'Choose a password for the new user:' "$USER_PASS" {ENTER}
-  dialog 'Re-enter password to verify:' "$USER_PASS" {ENTER}
-  dialog 'Select your time zone:' {ENTER} # Eastern
-  dialog 'Partitioning method:' {ENTER} # Guided - use entire disk
-  dialog 'Select disk to partition:' {ENTER}
-  dialog 'Partitioning scheme:' {ENTER}
-  dialog 'Finish partitioning and write changes to disk' {ENTER}
-  dialog 'Write the changes to disks?' {LEFT} {ENTER} # yes
+  prompt 'Choose the language' {ENTER} # English
+  prompt 'Country, territory or area:' {ENTER} # United States
+  prompt 'Keymap to use:' {ENTER} # American English
+  prompt 'Hostname:' {BS}x30 "$HOSTNAME" {ENTER}
+  prompt 'Domain name:' {ENTER}
+  prompt 'Root password:' "$ROOT_PASS" {ENTER}
+  prompt 'Re-enter password to verify:' "$ROOT_PASS" {ENTER}
+  prompt 'Full name for the new user:' "$USER_FULL_NAME" {ENTER}
+  prompt 'Username for your account:' {BS}x30 "$USER_NAME" {ENTER}
+  prompt 'Choose a password for the new user:' "$USER_PASS" {ENTER}
+  prompt 'Re-enter password to verify:' "$USER_PASS" {ENTER}
+  prompt 'Select your time zone:' {ENTER} # Eastern
+  prompt 'Partitioning method:' {ENTER} # Guided - use entire disk
+  prompt 'Select disk to partition:' {ENTER}
+  prompt 'Partitioning scheme:' {ENTER}
+  prompt 'Finish partitioning and write changes to disk' {ENTER}
+  prompt 'Write the changes to disks?' {LEFT} {ENTER} # yes
 
   timeout 300 'Base system installation'
 
-  dialog 'Scan extra installation media?' {ENTER} # no
-  dialog 'Use a network mirror?' {ENTER} # no
-  dialog 'Participate in the package usage survey?' {ENTER} # no
-  dialog 'Choose software to install:' {SPACE} {DOWN} {SPACE} {PAGEDOWN} {UP} {SPACE} {ENTER}
-  dialog 'Install the GRUB boot loader to your primary drive?' {ENTER} # yes
-  dialog 'Device for boot loader installation:' {DOWN} {ENTER} # primary device
-  dialog 'Please choose <Continue> to reboot' {ENTER}
+  prompt 'Scan extra installation media?' {ENTER} # no
+  prompt 'Use a network mirror?' {ENTER} # no
+  prompt 'Participate in the package usage survey?' {ENTER} # no
+  prompt 'Choose software to install:' {SPACE} {DOWN} {SPACE} {PAGEDOWN} {UP} {SPACE} {ENTER}
+  prompt 'Install the GRUB boot loader to your primary drive?' {ENTER} # yes
+  prompt 'Device for boot loader installation:' {DOWN} {ENTER} # primary device
+  prompt 'Please choose <Continue> to reboot' {ENTER}
 
   vm.vnc disable
 }

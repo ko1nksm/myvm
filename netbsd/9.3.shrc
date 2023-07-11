@@ -7,54 +7,54 @@ do_build() {
 }
 
 do_setup() {
-  dialog "install NetBSD" {ENTER}
-  dialog "Keyboard type" {ENTER}
-  dialog "NetBSD * Install System" {ENTER}
-  dialog "Shall we continue?" b {ENTER} # Yes
-  dialog "Available disks" {ENTER}
-  dialog "partitioning scheme" {ENTER}
-  dialog "This disk matches the following BIOS disk:" {ENTER}
-  dialog "NetBSD partitions" b {ENTER} # Use default partition sizes
-  dialog "Partition sizes ok" {ENTER}
-  dialog "Shall we continue?" b {ENTER} # Yes
-  dialog "Bootblocks selection" {ENTER}
-  dialog "Select your distribution" c {ENTER} # Minimal installation
-  dialog "Install from" {ENTER} # CD-ROM / DVD / install image media
-  dialog "The extraction of the selected sets for NetBSD-* is complete." {ENTER}
+  prompt "install NetBSD" {ENTER}
+  prompt "Keyboard type" {ENTER}
+  prompt "NetBSD * Install System" {ENTER}
+  prompt "Shall we continue?" b {ENTER} # Yes
+  prompt "Available disks" {ENTER}
+  prompt "partitioning scheme" {ENTER}
+  prompt "This disk matches the following BIOS disk:" {ENTER}
+  prompt "NetBSD partitions" b {ENTER} # Use default partition sizes
+  prompt "Partition sizes ok" {ENTER}
+  prompt "Shall we continue?" b {ENTER} # Yes
+  prompt "Bootblocks selection" {ENTER}
+  prompt "Select your distribution" c {ENTER} # Minimal installation
+  prompt "Install from" {ENTER} # CD-ROM / DVD / install image media
+  prompt "The extraction of the selected sets for NetBSD-* is complete." {ENTER}
 
   {
-    dialog "Configure the additional items as needed." a {ENTER} # Configure network
-    dialog "Which network device would you like to use?" {ENTER}
-    dialog "Network media type" {ENTER} # autoselect
-    dialog "Perform autoconfiguration?" {ENTER} # Yes
-    dialog "The following are the values you entered." {ENTER} # Yes
-    dialog "do you want it installed in" {ENTER} # Yes
+    prompt "Configure the additional items as needed." a {ENTER} # Configure network
+    prompt "Which network device would you like to use?" {ENTER}
+    prompt "Network media type" {ENTER} # autoselect
+    prompt "Perform autoconfiguration?" {ENTER} # Yes
+    prompt "The following are the values you entered." {ENTER} # Yes
+    prompt "do you want it installed in" {ENTER} # Yes
   }
 
   {
-    dialog "Configure the additional items as needed." d {ENTER} # Change root password
-    dialog "Do you want to set a root password for the system now?" {ENTER} # Yes
-    dialog "New password" "$ROOT_PASS" {ENTER}
-    dialog "Retype new password" "$ROOT_PASS" {ENTER}
+    prompt "Configure the additional items as needed." d {ENTER} # Change root password
+    prompt "Do you want to set a root password for the system now?" {ENTER} # Yes
+    prompt "New password" "$ROOT_PASS" {ENTER}
+    prompt "Retype new password" "$ROOT_PASS" {ENTER}
   }
 
   {
-    dialog "Configure the additional items as needed." g {ENTER} # Enable sshd
+    prompt "Configure the additional items as needed." g {ENTER} # Enable sshd
   }
 
   {
-    dialog "Configure the additional items as needed." o {ENTER} # Add a user
-    dialog "username to add" "$USER_NAME" {ENTER}
-    dialog "Do you wish to add this user to group wheel?" {ENTER} # Yes
-    dialog "User shell" {ENTER} # /bin/sh
-    dialog "New password" "$USER_PASS" {ENTER}
-    dialog "Retype new password" "$USER_PASS" {ENTER}
+    prompt "Configure the additional items as needed." o {ENTER} # Add a user
+    prompt "username to add" "$USER_NAME" {ENTER}
+    prompt "Do you wish to add this user to group wheel?" {ENTER} # Yes
+    prompt "User shell" {ENTER} # /bin/sh
+    prompt "New password" "$USER_PASS" {ENTER}
+    prompt "Retype new password" "$USER_PASS" {ENTER}
   }
 
-  dialog "Configure the additional items as needed." x {ENTER} # Finished configuring
+  prompt "Configure the additional items as needed." x {ENTER} # Finished configuring
 
-  dialog "The installation of NetBSD-* is now complete." {ENTER}
-  dialog "NetBSD-* Install System" d {ENTER} # Reboot the computer
+  prompt "The installation of NetBSD-* is now complete." {ENTER}
+  prompt "NetBSD-* Install System" d {ENTER} # Reboot the computer
 
   vm.vnc disable
 }

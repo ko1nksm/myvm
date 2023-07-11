@@ -7,77 +7,77 @@ do_build() {
     --cdrom "$DISK_DIR/dfly-x86_64-6.4.0_REL.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  dialog 'Boot DragonFly' {ENTER}
+  prompt 'Boot DragonFly' {ENTER}
 }
 
 do_setup() {
-  dialog "login:" installer {ENTER}
+  prompt "login:" installer {ENTER}
 
-  dialog "Welcome to the DragonFly BSD" {ENTER}
-  dialog "This application will install DragonFly BSD" {ENTER}
+  prompt "Welcome to the DragonFly BSD" {ENTER}
+  prompt "This application will install DragonFly BSD" {ENTER}
 
   if $USE_UEFI; then
-    dialog "Do you wish to set up DragonFly BSD for a UEFI" {ENTER} # UEFI
-    dialog "Select a disk on which to install" {ENTER}
+    prompt "Do you wish to set up DragonFly BSD for a UEFI" {ENTER} # UEFI
+    prompt "Select a disk on which to install" {ENTER}
   else
-    dialog "Do you wish to set up DragonFly BSD for a UEFI" {RIGHT} {ENTER} # Legacy BIOS
-    dialog "Select a disk on which to install" {ENTER}
-    dialog "Select how much of this disk" {ENTER} # Entire Disk
+    prompt "Do you wish to set up DragonFly BSD for a UEFI" {RIGHT} {ENTER} # Legacy BIOS
+    prompt "Select a disk on which to install" {ENTER}
+    prompt "Select how much of this disk" {ENTER} # Entire Disk
   fi
 
-  dialog "Are you ABSOLUTELY SURE" {ENTER}
-  dialog "The disk * was formatted" {ENTER}
-  dialog "Please select the file system" {RIGHT}x2 {ENTER} # Use UFS
-  dialog "Accept and Create" {UP}x2 {ENTER}
-  dialog "Everything is now ready to install" {ENTER} # Begin Installing Files
+  prompt "Are you ABSOLUTELY SURE" {ENTER}
+  prompt "The disk * was formatted" {ENTER}
+  prompt "Please select the file system" {RIGHT}x2 {ENTER} # Use UFS
+  prompt "Accept and Create" {UP}x2 {ENTER}
+  prompt "Everything is now ready to install" {ENTER} # Begin Installing Files
 
   if $USE_UEFI; then
     : # Nothing to do.
   else
-    dialog "You may now wish to install bootblocks" {DOWN} {ENTER} # Accept and Install Bootblocks
-    dialog "Bootblocks were successfully installed" {ENTER}
+    prompt "You may now wish to install bootblocks" {DOWN} {ENTER} # Accept and Install Bootblocks
+    prompt "Bootblocks were successfully installed" {ENTER}
   fi
 
   timeout 300 'Installation'
 
-  dialog "DragonFly BSD has successfully been installed" {ENTER} # Configure this System
+  prompt "DragonFly BSD has successfully been installed" {ENTER} # Configure this System
 
   {
-    dialog "The options on this menu allow you" {DOWN}x3 {ENTER} # Set root password
-    dialog "Root password" "$ROOT_PASS" {ENTER}
-    dialog "Root password again" "$ROOT_PASS" {ENTER}
+    prompt "The options on this menu allow you" {DOWN}x3 {ENTER} # Set root password
+    prompt "Root password" "$ROOT_PASS" {ENTER}
+    prompt "Root password again" "$ROOT_PASS" {ENTER}
     sendkey {ENTER}
-    dialog "The root password has been changed." {ENTER}
+    prompt "The root password has been changed." {ENTER}
   }
 
   {
-    dialog "The options on this menu allow you" {DOWN}x4 {ENTER} # Add a user
-    dialog "Username" "$USER_NAME" {ENTER}
-    dialog "Real Name" "$USER_FULL_NAME" {ENTER}
-    dialog "Password" "$USER_PASS" {ENTER}
-    dialog "Password (Again)" "$USER_PASS" {ENTER}
+    prompt "The options on this menu allow you" {DOWN}x4 {ENTER} # Add a user
+    prompt "Username" "$USER_NAME" {ENTER}
+    prompt "Real Name" "$USER_FULL_NAME" {ENTER}
+    prompt "Password" "$USER_PASS" {ENTER}
+    prompt "Password (Again)" "$USER_PASS" {ENTER}
     sendkey {ENTER}x6
-    dialog "User * was added." {ENTER}
+    prompt "User * was added." {ENTER}
   }
 
   {
-    dialog "The options on this menu allow you" {DOWN}x5 {ENTER} # Configure network interfaces
-    dialog "Please select which interface" {ENTER}
-    dialog "Would you like to enable DHCP" {ENTER}
-    dialog "Ethernet" {ENTER}
+    prompt "The options on this menu allow you" {DOWN}x5 {ENTER} # Configure network interfaces
+    prompt "Please select which interface" {ENTER}
+    prompt "Would you like to enable DHCP" {ENTER}
+    prompt "Ethernet" {ENTER}
   }
 
   {
-    dialog "The options on this menu allow you" {DOWN}x6 {ENTER} # Configure hostname and domain
-    dialog "Hostname" "$HOSTNAME" {ENTER}
-    dialog "Domain" {ENTER}
+    prompt "The options on this menu allow you" {DOWN}x6 {ENTER} # Configure hostname and domain
+    prompt "Hostname" "$HOSTNAME" {ENTER}
+    prompt "Domain" {ENTER}
     sendkey {ENTER}
   }
 
-  dialog "The options on this menu allow you" {UP} {ENTER} # Return to Welcome Menu
-  dialog "Welcome to the DragonFly BSD" {RIGHT}x4 {ENTER} # Reboot this Computer
-  dialog "Enter to reboot from the HDD" {ENTER}
-  dialog "The operating system has halted." {ENTER}
+  prompt "The options on this menu allow you" {UP} {ENTER} # Return to Welcome Menu
+  prompt "Welcome to the DragonFly BSD" {RIGHT}x4 {ENTER} # Reboot this Computer
+  prompt "Enter to reboot from the HDD" {ENTER}
+  prompt "The operating system has halted." {ENTER}
 
   vm.vnc disable
 }

@@ -7,39 +7,39 @@ do_build() {
 }
 
 do_setup() {
-  dialog 'To select the keyboard layout, enter a number' {ENTER} # US-English
-  dialog 'To select the language you wish to use, enter a number' {ENTER} # English
-  dialog 'Install Oracle Solaris' {ENTER} # Install Oracle Solaris
+  prompt 'To select the keyboard layout, enter a number' {ENTER} # US-English
+  prompt 'To select the language you wish to use, enter a number' {ENTER} # English
+  prompt 'Install Oracle Solaris' {ENTER} # Install Oracle Solaris
 
-  dialog 'Welcome to Oracle Solaris' {F2}
-  dialog 'Select discovery method for disks' {F2}
-  dialog 'Where should Oracle Solaris be installed?' {F2}
-  dialog 'Use the entire disk' {F2}
-  dialog 'System Identity' {BS}x30 "$HOSTNAME" {F2}
-  dialog 'Network Configuration' {F2}
-  dialog 'Network Configuration Method' {F2} # DHCP
-  dialog 'Time Zone: Regions' {F2} # UTC/GMT
-  dialog 'Locale: Language' {F2} # English
-  dialog 'Locale: Territory' {F2} # en_US.UTF-8
-  dialog 'Date and Time' {F2}
-  dialog 'Keyboard' {F2}
+  prompt 'Welcome to Oracle Solaris' {F2}
+  prompt 'Select discovery method for disks' {F2}
+  prompt 'Where should Oracle Solaris be installed?' {F2}
+  prompt 'Use the entire disk' {F2}
+  prompt 'System Identity' {BS}x30 "$HOSTNAME" {F2}
+  prompt 'Network Configuration' {F2}
+  prompt 'Network Configuration Method' {F2} # DHCP
+  prompt 'Time Zone: Regions' {F2} # UTC/GMT
+  prompt 'Locale: Language' {F2} # English
+  prompt 'Locale: Territory' {F2} # en_US.UTF-8
+  prompt 'Date and Time' {F2}
+  prompt 'Keyboard' {F2}
 
   waitfor 'Users'
   sendkey "$ROOT_PASS" {TAB} "$ROOT_PASS" {TAB}
   sendkey "$USER_FULL_NAME" {TAB} "$USER_NAME" {TAB}
   sendkey "$USER_PASS" {TAB} "$USER_PASS" {F2}
 
-  dialog 'Support - Registration' {F2}
-  dialog 'Installation Summary' {F2}
+  prompt 'Support - Registration' {F2}
+  prompt 'Installation Summary' {F2}
 
   timeout 900 'Installation'
 
-  dialog 'Installation Complete' {F8} # Reboot
+  prompt 'Installation Complete' {F8} # Reboot
 
   timeout 300 'Rebooting'
 
-  dialog 'console login' "$USER_NAME" {ENTER}
-  dialog "Password:" "$USER_PASS" {ENTER}
+  prompt 'console login' "$USER_NAME" {ENTER}
+  prompt "Password:" "$USER_PASS" {ENTER}
   enter 'sudo poweroff' "$USER_PASS"
 
   vm.vnc disable
