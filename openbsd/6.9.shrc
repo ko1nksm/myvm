@@ -28,14 +28,14 @@ do_setup() {
   prompt 'Use (W)hole disk MBR' {ENTER}
   prompt 'create (C)ustom layout?' c {ENTER} # Custom layout
   {
-    enter z # delete all partitions
-    enter "a a" '' "8G" '' /
-    enter "a b" '' '' swap
-    enter "p m" q y
+    sendkey z {ENTER} # delete all partitions
+    sendkey "a a" {ENTER}x2 "8G" {ENTER}x2 / {ENTER}
+    sendkey "a b" {ENTER}x3 swap {ENTER}
+    sendkey "p m" {ENTER} q {ENTER} y {ENTER}
   }
   prompt "install the sets" {ENTER}
   prompt "Pathname to the sets" {ENTER}
-  prompt "Select sets by entering a set name" "-game* -x*" "done" {ENTER}
+  prompt "Select sets by entering a set name" "-game* -x*" {ENTER} "done" {ENTER}
   prompt "Continue without verification" yes {ENTER}
   prompt "Location of sets" "done" {ENTER}
   prompt "What timezone are you in" UTC {ENTER}

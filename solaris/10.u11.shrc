@@ -67,7 +67,10 @@ do_setup() {
   prompt 'Automatically Layout File Systems?' {F4} # Manual Layout
   prompt 'File System and Disk Layout' {F4} # Costomize
   waitfor 'Customize Disk'
-  enter / 16384 swap 4039
+  {
+    sendkey / {ENTER} 16384 {ENTER}
+    sendkey swap {ENTER} 4039 {ENTER}
+  }
   sendkey {F2}
   prompt 'File System and Disk Layout' {F2}
   prompt 'Mount Remote File Systems?' {F2}
@@ -90,27 +93,29 @@ do_setup() {
   do_attach_cdrom
   sleep 15
 
-  enter 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
-  enter 'cd /mnt/Solaris_10/Product/'
-  enter 'yes | pkgadd -d . SUNWsshcu SUNWsshdr SUNWsshdu SUNWsshr SUNWsshu'
-  timeout 300 'SSH installation'
-  waitfor 'Installation of <SUNWsshu> was successful.'
-  timeout 300 'Basic tools installation'
-  enter 'yes | pkgadd -d . SUNWbash SUNWless SUNWdoc SUNWman SUNWjman'
-  waitfor 'Installation of <SUNWjman> was successful.'
-  enter '/lib/svc/method/sshd -c'
-  enter 'ed /etc/ssh/sshd_config'
-  enter ',s/PermitRootLogin no/PermitRootLogin yes/g'
-  enter '$a' 'PubkeyAuthentication yes' . w q
-  enter 'svcadm disable sendmail sendmail-client'
-  enter 'svcadm enable ssh'
-  enter 'svcadm restart ssh'
-  enter 'shutdown -y -g0 -i5'
+  begin_shell
+  - 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
+  - 'cd /mnt/Solaris_10/Product/'
+  - 'yes | pkgadd -d . SUNWsshcu SUNWsshdr SUNWsshdu SUNWsshr SUNWsshu'
+  - 'yes | pkgadd -d . SUNWbash SUNWless SUNWdoc SUNWman SUNWjman'
+  - '/lib/svc/method/sshd -c'
+  - 'ed /etc/ssh/sshd_config << "HERE"'
+  - ',s/PermitRootLogin no/PermitRootLogin yes/g'
+  - '$a'
+  - 'PubkeyAuthentication yes'
+  - '.'
+  - 'w'
+  - 'q'
+  - 'HERE'
+  - 'svcadm disable sendmail sendmail-client'
+  - 'svcadm enable ssh'
+  - 'svcadm restart ssh'
+  - 'shutdown -y -g0 -i5'
+  end_shell
 
-  timeout 120 'Shutdown'
+  timeout 600 'Shutdown'
 
   waitfor 'reboot'
-
   vm.stop
   vm.vnc disable
 }

@@ -8,10 +8,6 @@ ROOT_PASS="pass1234"
 USER_NAME="user" USER_FULL_NAME="User" USER_PASS="pass1234"
 DEFAULT_TIMEOUT=60
 
-if (export PATH=/dev/null; shopt -s expand_aliases 2>/dev/null); then
-  shopt -s expand_aliases
-fi
-
 version() { echo "0.0.1"; }
 usage() {
   cat <<HERE
@@ -19,7 +15,6 @@ Usage: myvm <command> <shrc-file> [<args>]...
 
 commands:
   run <shrc-file> [<tasks> | --step-on]...
-  enter <shrc-file> [<keys>]...
   sendkey <shrc-file> [<keys>]...
   ocr <shrc-file>
   vnc <shrc-file> [enable | disable | display]
@@ -32,10 +27,24 @@ abort() {
   exit 1
 }
 
+if (export PATH=/dev/null; shopt -s expand_aliases 2>/dev/null); then
+  shopt -s expand_aliases
+fi
+
 . ./lib/vm.sh
 for i in build stop restart setmem vnc attach_disk detach_disk; do
   eval "alias vm.$i='vm_$i \"\$DOMAIN\"'"
 done
+
+exalias() {
+  if (eval "function '$1'() { :; }") >/dev/null 2>&1; then
+    eval "function '$1'() { $2 \"\$@\"; }"
+  elif (alias "$1=:") 2>/dev/null; then
+    alias "$1=$2"
+  else
+    alias -- "$1=$2"
+  fi
+}
 
 step_mode=false
 step_on() {
@@ -65,18 +74,6 @@ sendkey() {
 
 repeat_sendkey() {
   eval "shift; set --$(printf "%*s" "$1" | sed 's/ / "$@"/g')"
-  sendkey "$@"
-}
-
-enter() {
-  for i in "$@"; do
-    case $i in
-      '{'*) set -- "$@" '{' "${i#?}" '{ENTER}' ;;
-      *) set -- "$@" "$i" '{ENTER}' ;;
-    esac
-    shift
-  done
-  [ $# -eq 0 ] && set -- '{ENTER}'
   sendkey "$@"
 }
 
@@ -111,6 +108,23 @@ waitfor() {
   done
   echo " [Timeout]"
   return 1
+}
+
+begin_shell() {
+  sendkey 'sh -e << "MYVM_SHELL_HEREDOC"' {ENTER}
+}
+
+exalias - list_item
+list_item() {
+  IFS=" $IFS" && set -- "$*" && IFS="${IFS#?}"
+  case $1 in
+    '{'*'}') set -- '{' "${1#?}" ;;
+  esac
+  sendkey "$@" '{ENTER}'
+}
+
+end_shell() {
+  sendkey 'MYVM_SHELL_HEREDOC' {ENTER}
 }
 
 spelling_correction() {
@@ -154,10 +168,6 @@ cmd_run() {
   done
 }
 
-cmd_enter() {
-  enter "$@"
-}
-
 cmd_sendkey() {
   sendkey "$@"
 }
@@ -183,7 +193,7 @@ cmd_demolish() {
 }
 
 case ${1:-} in
-  run | enter | sendkey | ocr | vnc | demolish) SUBCOMMAND=$1 ;;
+  run | sendkey | ocr | vnc | demolish) SUBCOMMAND=$1 ;;
   -h | --help | help) usage && exit 0 ;;
   -V | --version | version) version && exit 0 ;;
   *) echo "Invalid subcommand." && usage && abort ;;

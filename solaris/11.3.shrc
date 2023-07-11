@@ -40,7 +40,8 @@ do_setup() {
 
   prompt 'console login' "$USER_NAME" {ENTER}
   prompt "Password:" "$USER_PASS" {ENTER}
-  enter 'sudo poweroff' "$USER_PASS"
+  sendkey 'sudo poweroff' {ENTER}
+  prompt "Password:" "$USER_PASS" {ENTER}
 
   timeout 120 'Shutdown'
 

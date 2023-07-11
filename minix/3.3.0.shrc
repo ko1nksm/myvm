@@ -30,17 +30,16 @@ do_setup() {
 
   prompt 'login' root {ENTER}
 
-  enter passwd "$ROOT_PASS" "$ROOT_PASS"
-  enter 'pkgin -y update'
+  sendkey passwd {ENTER}
+  prompt 'New password' "$ROOT_PASS" {ENTER}
+  prompt 'Retype new password:' "$ROOT_PASS" {ENTER}
 
-  waitfor 'updating database'
-  enter 'pkgin -y install openssh'
-
-  waitfor 'marking openssh'
-  enter '/usr/pkg/etc/rc.d/sshd start'
-
-  waitfor 'Generating'
-  enter 'shutdown -p now'
+  begin_shell
+  - 'pkgin -y update'
+  - 'pkgin -y install openssh'
+  - '/usr/pkg/etc/rc.d/sshd start'
+  - 'shutdown -p now'
+  end_shell
 
   vm.vnc disable
 }

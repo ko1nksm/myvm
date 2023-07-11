@@ -35,8 +35,16 @@ do_setup() {
 
   timeout 300 'Startup'
 
-  prompt 'console login' "$USER_NAME" "$USER_PASS" {ENTER}
-  enter 'sudo poweroff' "$USER_PASS"
+  prompt 'console login' "$USER_NAME" {ENTER}
+  prompt "Password:" "$USER_PASS" {ENTER}
+  sendkey 'sudo poweroff' {ENTER}
+  prompt "Password:" "$USER_PASS" {ENTER}
 
   vm.vnc disable
+}
+
+spelling_correction() {
+  sed '
+    s/iassword/Password/g
+  '
 }
