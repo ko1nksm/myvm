@@ -75,8 +75,8 @@ do_setup() {
 
   timeout 300 'Installation'
 
-  prompt 'Pausing for 30 seconds' c
-  prompt 'Pausing for 90 seconds' c
+  dialog 'Pausing for 30 seconds' c {ENTER}
+  dialog 'Pausing for 90 seconds' c {ENTER}
 
   vm.restart
 
@@ -84,8 +84,8 @@ do_setup() {
 
   timeout 120 'Startup'
 
-  prompt 'console login' root
-  prompt "Password:" "$ROOT_PASS"
+  dialog 'console login' root {ENTER}
+  dialog "Password:" "$ROOT_PASS" {ENTER}
 
   do_attach_cdrom
   sleep 15

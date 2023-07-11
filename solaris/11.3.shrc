@@ -7,9 +7,9 @@ do_build() {
 }
 
 do_setup() {
-  prompt 'To select the keyboard layout, enter a number' # US-English
-  prompt 'To select the language you wish to use, enter a number' # English
-  prompt 'Install Oracle Solaris' # Install Oracle Solaris
+  dialog 'To select the keyboard layout, enter a number' {ENTER} # US-English
+  dialog 'To select the language you wish to use, enter a number' {ENTER} # English
+  dialog 'Install Oracle Solaris' {ENTER} # Install Oracle Solaris
 
   dialog 'Welcome to Oracle Solaris' {F2}
   dialog 'Select discovery method for disks' {F2}
@@ -38,8 +38,8 @@ do_setup() {
 
   timeout 300 'Rebooting'
 
-  prompt 'console login' "$USER_NAME"
-  prompt "Password:" "$USER_PASS"
+  dialog 'console login' "$USER_NAME" {ENTER}
+  dialog "Password:" "$USER_PASS" {ENTER}
   enter 'sudo poweroff' "$USER_PASS"
 
   timeout 120 'Shutdown'

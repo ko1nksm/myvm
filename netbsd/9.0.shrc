@@ -36,8 +36,8 @@ do_setup() {
   {
     dialog "Configure the additional items as needed." d {ENTER} # Change root password
     dialog "Do you want to set a root password for the system now?" {ENTER} # Yes
-    prompt "New password" "$ROOT_PASS"
-    prompt "Retype new password" "$ROOT_PASS"
+    dialog "New password" "$ROOT_PASS" {ENTER}
+    dialog "Retype new password" "$ROOT_PASS" {ENTER}
   }
 
   {
@@ -46,11 +46,11 @@ do_setup() {
 
   {
     dialog "Configure the additional items as needed." o {ENTER} # Add a user
-    prompt "username to add" "$USER_NAME"
+    dialog "username to add" "$USER_NAME" {ENTER}
     dialog "Do you wish to add this user to group wheel?" {ENTER} # Yes
     dialog "User shell" {ENTER} # /bin/sh
-    prompt "New password" "$USER_PASS"
-    prompt "Retype new password" "$USER_PASS"
+    dialog "New password" "$USER_PASS" {ENTER}
+    dialog "Retype new password" "$USER_PASS" {ENTER}
   }
 
   dialog "Configure the additional items as needed." x {ENTER} # Finished configuring

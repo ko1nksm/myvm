@@ -24,8 +24,8 @@ do_setup() {
 
   waitfor 'Please select a password for the system management account (root)'
   {
-    prompt "New Password" "$ROOT_PASS"
-    prompt "Retype New Password" "$ROOT_PASS"
+    dialog "New Password" "$ROOT_PASS" {ENTER}
+    dialog "Retype New Password" "$ROOT_PASS" {ENTER}
   }
 
   dialog "Please select a network interface" {ENTER}
@@ -44,23 +44,23 @@ do_setup() {
 
   waitfor "Add Users"
   {
-    prompt 'Username' "$USER_NAME"
-    prompt 'Full name' "$USER_FULL_NAME"
-    prompt 'Uid'
-    prompt 'Login group'
-    prompt 'Invite user into other groups'
-    prompt 'Login class'
-    prompt 'Shell'
-    prompt 'Home directory'
-    prompt 'Home directory permissions'
-    prompt 'Use password-based authentication' # yes
-    prompt 'Use an empty password' # no
-    prompt 'Use a random password' # no
-    prompt 'Enter password' "$USER_PASS"
-    prompt 'Enter password again' "$USER_PASS"
-    prompt 'Lock out the account after creation' # no
-    prompt 'OK? (yes/no)' yes
-    prompt "Add another user" no
+    dialog 'Username' "$USER_NAME" {ENTER}
+    dialog 'Full name' "$USER_FULL_NAME" {ENTER}
+    dialog 'Uid' {ENTER}
+    dialog 'Login group' {ENTER}
+    dialog 'Invite user into other groups' {ENTER}
+    dialog 'Login class' {ENTER}
+    dialog 'Shell' {ENTER}
+    dialog 'Home directory' {ENTER}
+    dialog 'Home directory permissions' {ENTER}
+    dialog 'Use password-based authentication' {ENTER} # yes
+    dialog 'Use an empty password' {ENTER} # no
+    dialog 'Use a random password' {ENTER} # no
+    dialog 'Enter password' "$USER_PASS" {ENTER}
+    dialog 'Enter password again' "$USER_PASS" {ENTER}
+    dialog 'Lock out the account after creation' {ENTER} # no
+    dialog 'OK? (yes/no)' yes {ENTER}
+    dialog "Add another user" no {ENTER}
   }
 
   dialog "Setup of your FreeBSD system is nearly complete" {ENTER}

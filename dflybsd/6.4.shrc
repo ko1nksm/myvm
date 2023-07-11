@@ -11,7 +11,7 @@ do_build() {
 }
 
 do_setup() {
-  prompt "login:" installer
+  dialog "login:" installer {ENTER}
 
   dialog "Welcome to the DragonFly BSD" {ENTER}
   dialog "This application will install DragonFly BSD" {ENTER}
@@ -44,18 +44,18 @@ do_setup() {
 
   {
     dialog "The options on this menu allow you" {DOWN}x3 {ENTER} # Set root password
-    prompt "Root password" "$ROOT_PASS"
-    prompt "Root password again" "$ROOT_PASS"
+    dialog "Root password" "$ROOT_PASS" {ENTER}
+    dialog "Root password again" "$ROOT_PASS" {ENTER}
     sendkey {ENTER}
     dialog "The root password has been changed." {ENTER}
   }
 
   {
     dialog "The options on this menu allow you" {DOWN}x4 {ENTER} # Add a user
-    prompt "Username" "$USER_NAME"
-    prompt "Real Name" "$USER_FULL_NAME"
-    prompt "Password" "$USER_PASS"
-    prompt "Password (Again)" "$USER_PASS"
+    dialog "Username" "$USER_NAME" {ENTER}
+    dialog "Real Name" "$USER_FULL_NAME" {ENTER}
+    dialog "Password" "$USER_PASS" {ENTER}
+    dialog "Password (Again)" "$USER_PASS" {ENTER}
     sendkey {ENTER}x6
     dialog "User * was added." {ENTER}
   }
@@ -69,8 +69,8 @@ do_setup() {
 
   {
     dialog "The options on this menu allow you" {DOWN}x6 {ENTER} # Configure hostname and domain
-    prompt "Hostname" "$HOSTNAME"
-    prompt "Domain" ""
+    dialog "Hostname" "$HOSTNAME" {ENTER}
+    dialog "Domain" {ENTER}
     sendkey {ENTER}
   }
 

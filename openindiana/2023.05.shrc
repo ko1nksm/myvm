@@ -9,9 +9,9 @@ do_build() {
 }
 
 do_setup() {
-  prompt 'To select the keyboard layout, enter a number'
-  prompt 'To select the language you wish to use, enter a number'
-  prompt 'Install OpenlIndiana'
+  dialog 'To select the keyboard layout, enter a number' {ENTER}
+  dialog 'To select the language you wish to use, enter a number' {ENTER}
+  dialog 'Install OpenlIndiana' {ENTER}
   dialog 'Welcome to OpenIndiana' {F2}
   dialog 'Where should OpenIndiana be installed?' {F2}
   dialog 'the loss of all existing data' {RIGHT} {ENTER}
@@ -35,7 +35,7 @@ do_setup() {
 
   timeout 300 'Startup'
 
-  prompt 'console login' "$USER_NAME" "$USER_PASS"
+  dialog 'console login' "$USER_NAME" "$USER_PASS" {ENTER}
   enter 'sudo poweroff' "$USER_PASS"
 
   vm.vnc disable

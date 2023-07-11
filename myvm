@@ -86,12 +86,6 @@ dialog() {
   sendkey "$@"
 }
 
-prompt() {
-  waitfor "$1"
-  shift
-  enter "$@"
-}
-
 next_timeout=''
 timeout() {
   set -- "$1" "${2:-"Time-consuming"}"

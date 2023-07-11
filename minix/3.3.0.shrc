@@ -8,27 +8,27 @@ do_build() {
 }
 
 do_setup() {
-  prompt 'Type "root" at the login prompt' root
-  prompt 'type "setup" and hit enter to start the installation process' setup
-  prompt 'If you see a colon (:) then you should hit ENTER to continue' ''
-  prompt 'Keyboard type?' '' # us-std
-  prompt 'Press ENTER for automatic mode' ''
-  prompt 'Enter the disk number to use' '' # 0
-  prompt 'Enter the region number to use' '' # 0
-  prompt 'Are you sure you want to continue?' yes
-  prompt 'How big do you want your /home' '' # disk size
-  prompt 'Ok?' y
-  prompt 'Block size in kilobytes' ''
+  dialog 'Type "root" at the login prompt' root {ENTER}
+  dialog 'type "setup" and hit enter to start the installation process' setup {ENTER}
+  dialog 'If you see a colon (:) then you should hit ENTER to continue' {ENTER}
+  dialog 'Keyboard type?' {ENTER} # us-std
+  dialog 'Press ENTER for automatic mode' {ENTER}
+  dialog 'Enter the disk number to use' {ENTER} # 0
+  dialog 'Enter the region number to use' {ENTER} # 0
+  dialog 'Are you sure you want to continue?' yes {ENTER}
+  dialog 'How big do you want your /home' {ENTER} # disk size
+  dialog 'Ok?' y {ENTER}
+  dialog 'Block size in kilobytes' {ENTER}
 
   timeout 300 "File copying"
 
-  prompt 'Ethernet card' ''
-  prompt 'Automatically using DHCP' ''
-  prompt "Please type 'reboot" reboot
+  dialog 'Ethernet card' {ENTER}
+  dialog 'Automatically using DHCP' {ENTER}
+  dialog "Please type 'reboot" reboot {ENTER}
 
   vm.restart
 
-  prompt 'login' root
+  dialog 'login' root {ENTER}
 
   enter passwd "$ROOT_PASS" "$ROOT_PASS"
   enter 'pkgin -y update'
