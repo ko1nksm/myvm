@@ -72,11 +72,6 @@ sendkey() {
   vm_sendkey "$DOMAIN" "$@"
 }
 
-repeat_sendkey() {
-  eval "shift; set --$(printf "%*s" "$1" | sed 's/ / "$@"/g')"
-  sendkey "$@"
-}
-
 prompt() {
   waitfor "$1"
   shift

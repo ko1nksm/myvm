@@ -34,7 +34,6 @@ Usage: myvm demolish <shrc-file>
   - The pattern supports only "*" matching any string.
 - `sendkey [keys]...` Send Key corresponding to each character
 - `enter [words]...` Enter a string. The end of the string contains a newline
-- `repeat_sendkey <n> [keys]...` Repeat the specified strings
 - `timeout <seconds>` Extends the timeout for the next `waitfor`
 - `step_on`  Turn on step execution for debugging
 

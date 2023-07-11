@@ -51,9 +51,11 @@ do_setup() {
   prompt 'Choose Media' {F2}
   prompt 'License' {F2}
   waitfor 'Select Geographic Regions' # Select the all geographic regions
-  sendkey {RIGHT} {SPACE}
-  repeat_sendkey 12 {DOWN} {SPACE}
-  sendkey {F2}
+  set --
+  for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+    set -- "$@" {DOWN} {SPACE}
+  done
+  sendkey {RIGHT} {SPACE} "$@" {F2}
   prompt 'Select System Locale' {F2} # C
   prompt 'Additional Products' {F2}
   prompt 'Choose Filesystem Type' {F2} # UFS
