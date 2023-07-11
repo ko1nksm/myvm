@@ -140,8 +140,12 @@ _match() {
   )
 }
 
+exec_ocr() {
+  gm convert - -colorspace Gray -resize 200% - | tesseract --psm 6 - -
+}
+
 ocr() {
-  vm_screenshot "$DOMAIN" | ./libexec/ocr.sh | {
+  vm_screenshot "$DOMAIN" | exec_ocr | {
     LANG=C tr -cs '[:print:]\n' ' ' | grep .
   } | spelling_correction
 }
