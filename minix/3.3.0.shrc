@@ -41,6 +41,14 @@ do_setup() {
   end_shell
   waitfor "Install sshd success" "Install sshd failure"
 
+  begin_file /var/tmp/a.txt
+  - line1
+  - line2
+  end_file
+
+  copy_file "$HOME/.ssh/authorized_keys" "/root/.ssh/authorized_keys"
+  enter 'chmod 600 /root/.ssh/authorized_keys'
+
   enter 'shutdown -p now'
 
   vm.vnc disable

@@ -150,6 +150,23 @@ end_shell() {
   enter 'MYVM_SHELL_HEREDOC'
 }
 
+begin_file() {
+  enter "cat << 'MYVM_FILE_HEREDOC' > $1"
+}
+
+end_file() {
+  enter 'MYVM_FILE_HEREDOC'
+}
+
+copy_file() {
+  enter "mkdir -p ${2%/*}"
+  enter "cat << 'MYVM_FILE_HEREDOC' > $2"
+  while IFS= read -r line; do
+    enter "$line"
+  done < "$1"
+  enter 'MYVM_FILE_HEREDOC'
+}
+
 spelling_correction() {
   cat
 }
