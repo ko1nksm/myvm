@@ -34,12 +34,14 @@ do_setup() {
   prompt 'New password' "$ROOT_PASS" {ENTER}
   prompt 'Retype new password:' "$ROOT_PASS" {ENTER}
 
-  begin_shell
+  begin_shell 'Install sshd'
   - 'pkgin -y update'
   - 'pkgin -y install openssh'
   - '/usr/pkg/etc/rc.d/sshd start'
-  - 'shutdown -p now'
   end_shell
+  waitfor "Install sshd success" "Install sshd failure"
+
+  enter 'shutdown -p now'
 
   vm.vnc disable
 }
@@ -50,4 +52,12 @@ spelling_correction() {
     s|0k?|Ok?|g
     s|shome|/home|g
   '
+}
+
+do_test() {
+  begin_shell 'Install sshd'
+  - 'tput clear'
+  - 'echo'
+  end_shell
+  waitfor "Install sshd success" "Install sshd failure"
 }

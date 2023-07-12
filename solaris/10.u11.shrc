@@ -95,25 +95,27 @@ do_setup() {
   do_attach_cdrom
   sleep 15
 
-  begin_shell
+  begin_shell 'Install packages'
   - 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
   - 'cd /mnt/Solaris_10/Product/'
   - 'yes | pkgadd -d . SUNWsshcu SUNWsshdr SUNWsshdu SUNWsshr SUNWsshu'
   - 'yes | pkgadd -d . SUNWbash SUNWless SUNWdoc SUNWman SUNWjman'
+  end_shell
+  waitfor "Install packages success" "Install packages failure"
+
+  begin_shell 'Setup sshd'
   - '/lib/svc/method/sshd -c'
   - 'ed /etc/ssh/sshd_config << "HERE"'
   - ',s/PermitRootLogin no/PermitRootLogin yes/g'
-  - '$a'
-  - 'PubkeyAuthentication yes'
-  - '.'
-  - 'w'
-  - 'q'
+  - '$a' 'PubkeyAuthentication yes' . w q
   - 'HERE'
-  - 'svcadm disable sendmail sendmail-client'
   - 'svcadm enable ssh'
   - 'svcadm restart ssh'
-  - 'shutdown -y -g0 -i5'
   end_shell
+  waitfor "Setup sshd success" "Setup sshd failure"
+
+  enter 'svcadm disable sendmail sendmail-client'
+  enter 'shutdown -y -g0 -i5'
 
   timeout 600 'Shutdown'
 

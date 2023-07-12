@@ -55,7 +55,7 @@ sendkey() {
   [ $# -eq 0 ] && return 0
   if $step_mode; then
     while true; do
-      printf '%s' "Send keys '$*'? [Y/s/a/o or ? for help]: "
+      printf '%s' "Send keys: $* ? [Y/s/a/o or ? for help]: "
       read -r REPLY
       case ${REPLY:-y} in
         [yY]*) break ;;
@@ -66,10 +66,21 @@ sendkey() {
       esac
     done
   else
-    echo "Send keys '$*'"
+    echo "Send keys: $*"
   fi
 
   vm_sendkey "$DOMAIN" "$@"
+}
+
+enter() {
+  [ $# -eq 0 ] && set -- ''
+  while [ $# -gt 0 ]; do
+    case $1 in
+      '{'*'}') sendkey "$1" '{' "${1#?}" '{ENTER}' ;;
+      *) sendkey "$1" '{ENTER}'
+    esac
+    shift
+  done
 }
 
 prompt() {
@@ -86,51 +97,34 @@ timeout() {
 }
 
 waitfor() {
-  set -- "$1" "${next_timeout:-$DEFAULT_TIMEOUT}"
+  set -- "$1" "${2:-}" "${next_timeout:-$DEFAULT_TIMEOUT}"
   next_timeout=''
 
-  set -- "$1" "$2" 10
-  [ "$2" -le 300 ] && set -- "$1" "$2" 5
-  [ "$2" -le 60 ] && set -- "$1" "$2" 3
+  set -- "$1" "$2" "$3" 10
+  [ "$3" -le 300 ] && set -- "$1" "$2" "$3" 5
+  [ "$3" -le 60 ] && set -- "$1" "$2" "$3" 3
 
   printf '%s' "Waiting for '$1' "
   start=$(date +%s) && end=$start
-  while [ "$end" -le $((start + $2)) ]; do
+  while [ "$end" -le $((start + $3)) ]; do
     printf '.'
-    ocr | _match "$1" && echo " [Found]" && return 0
-    sleep "$3"
+    if texts=$(ocr); then
+      [ "$2" ] && _match "$texts" "$2" && echo " [Failure]" && return 1
+      _match "$texts" "$1" && echo " [Found]" && return 0
+    else
+      echo " [Error]" && return 1
+    fi
+    sleep "$4"
     end=$(date +%s)
   done
   echo " [Timeout]"
   return 1
 }
 
-begin_shell() {
-  sendkey 'sh -e << "MYVM_SHELL_HEREDOC"' {ENTER}
-}
-
-exalias - list_item
-list_item() {
-  IFS=" $IFS" && set -- "$*" && IFS="${IFS#?}"
-  case $1 in
-    '{'*'}') set -- '{' "${1#?}" ;;
-  esac
-  sendkey "$@" '{ENTER}'
-}
-
-end_shell() {
-  sendkey 'MYVM_SHELL_HEREDOC' {ENTER}
-}
-
-spelling_correction() {
-  cat
-}
-
 _match() {
   (
-    set -f
-    IFS="*"
-    set -- "$(tr -s '\n' ' ')" $(printf '%s' "$1" | tr -s '\n' ' ')
+    set -f && IFS="*"
+    set -- "$(_join "$1")" $(_join "$2")
     i=1 pattern=''
     while [ "$i" -lt $# ] && i=$((i + 1)); do
       pattern="${pattern}${pattern:+"*"}\"\$$i\""
@@ -138,6 +132,29 @@ _match() {
     eval "case \$1 in (*$pattern*) exit 0; esac"
     exit 1
   )
+}
+
+_join() {
+  printf '%s' "$1" | tr -s '\n' ' '
+}
+
+exalias - enter
+
+begin_shell() {
+  echo "exec shell: $1"
+  enter "sh -s - '$1' << 'MYVM_SHELL_HEREDOC'"
+  enter '( set -e'
+}
+
+end_shell() {
+  enter ')'
+  enter "e=\$? s=success && [ \$e -eq 0 ] || s=failure"
+  enter "echo \$1 \$s \$e"
+  enter 'MYVM_SHELL_HEREDOC'
+}
+
+spelling_correction() {
+  cat
 }
 
 exec_ocr() {
