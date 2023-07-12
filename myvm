@@ -73,14 +73,11 @@ sendkey() {
 }
 
 enter() {
-  [ $# -eq 0 ] && set -- ''
-  while [ $# -gt 0 ]; do
-    case $1 in
-      '{'*'}') sendkey "$1" '{' "${1#?}" '{ENTER}' ;;
-      *) sendkey "$1" '{ENTER}'
-    esac
-    shift
-  done
+  IFS=" $IFS" && set -- "$*" && IFS="${IFS#?}"
+  case $1 in
+    '{'*'}') sendkey "$1" '{' "${1#?}" '{ENTER}' ;;
+    *) sendkey "$1" '{ENTER}'
+  esac
 }
 
 prompt() {

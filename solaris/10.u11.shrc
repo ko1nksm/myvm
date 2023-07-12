@@ -107,7 +107,11 @@ do_setup() {
   - '/lib/svc/method/sshd -c'
   - 'ed /etc/ssh/sshd_config << "HERE"'
   - ',s/PermitRootLogin no/PermitRootLogin yes/g'
-  - '$a' 'PubkeyAuthentication yes' . w q
+  - '$a'
+  - 'PubkeyAuthentication yes'
+  - '.'
+  - 'w'
+  - 'q'
   - 'HERE'
   - 'svcadm enable ssh'
   - 'svcadm restart ssh'

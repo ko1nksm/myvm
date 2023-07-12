@@ -35,9 +35,9 @@ do_setup() {
   prompt 'Retype new password:' "$ROOT_PASS" {ENTER}
 
   begin_shell 'Install sshd'
-  - 'pkgin -y update'
-  - 'pkgin -y install openssh'
-  - '/usr/pkg/etc/rc.d/sshd start'
+  - pkgin -y update
+  - pkgin -y install openssh
+  - /usr/pkg/etc/rc.d/sshd start
   end_shell
   waitfor "Install sshd success" "Install sshd failure"
 
