@@ -30,7 +30,7 @@ do_setup() {
 
   prompt 'login' root {ENTER}
 
-  sendkey passwd {ENTER}
+  enter passwd
   prompt 'New password' "$ROOT_PASS" {ENTER}
   prompt 'Retype new password:' "$ROOT_PASS" {ENTER}
 
@@ -52,12 +52,4 @@ spelling_correction() {
     s|0k?|Ok?|g
     s|shome|/home|g
   '
-}
-
-do_test() {
-  begin_shell 'Install sshd'
-  - 'tput clear'
-  - 'echo'
-  end_shell
-  waitfor "Install sshd success" "Install sshd failure"
 }
