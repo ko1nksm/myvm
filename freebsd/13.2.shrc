@@ -73,6 +73,8 @@ spelling_correction() {
   sed '
     s/Helcome/Welcome/g
     s/DK?/OK?/g
+    s/Neu/New/g
+    s/Usernane/Username/g
     s/Houw/How/g
     s/nouw/now/g
   ' | tr '"' "'"

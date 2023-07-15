@@ -80,5 +80,29 @@ do_setup() {
   prompt "Enter to reboot from the HDD" {ENTER}
   prompt "The operating system has halted." {ENTER}
 
+  vm.restart
+
+  prompt 'Boot DragonFly' {ENTER}
+
+  prompt "login:" root {ENTER}
+  prompt "Password:" "$ROOT_PASS" {ENTER}
+
+  enter 'exec sh'
+
+  begin_shell 'Setup sshd'
+  - 'ed /etc/ssh/sshd_config << "HERE"'
+  - ',s/PasswordAuthentication no/PasswordAuthentication yes/g'
+  - '$a'
+  - 'PermitRootLogin yes'
+  - 'PubkeyAuthentication yes'
+  - '.'
+  - 'w'
+  - 'q'
+  - 'HERE'
+  end_shell
+  waitfor "Setup sshd success" "Setup sshd failure"
+
+  enter "shutdown -p now" {ENTER}
+
   vm.vnc disable
 }
