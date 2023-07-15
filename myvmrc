@@ -1,0 +1,11 @@
+HOSTNAME="vm-${HOSTNAME}"
+MACADDR=''
+while read -r name hostname ipaddr macaddr date; do
+  if [ "$hostname" = "$HOSTNAME" ]; then
+    MACADDR="$macaddr"
+  fi
+done < vmlist.txt
+
+if [ ! "$MACADDR" ]; then
+  echo "MAC address is not set"
+fi

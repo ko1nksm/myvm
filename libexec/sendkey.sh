@@ -4,6 +4,9 @@ set -eu
 
 virsh_sendkey() {
   virsh send-key "$domain" "$@" >/dev/null
+  if [ "${MYVM_VIRSH_SENDKEY_WAIT:-}" ]; then
+    sleep "$MYVM_VIRSH_SENDKEY_WAIT"
+  fi
 }
 
 define_keymap() {

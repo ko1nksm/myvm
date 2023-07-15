@@ -1,7 +1,7 @@
 do_build() {
   vm.build --name "$DOMAIN" --osinfo openindiana \
     --vcpus 1 --memory 2048 --disk size=20 \
-    --network bridge='br0',mac='52:54:00:00:06:01' \
+    --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/OI-hipster-text-20230502.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 

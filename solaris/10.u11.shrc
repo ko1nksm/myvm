@@ -1,7 +1,10 @@
+# If sendkey is too fast, keys are missed.
+export MYVM_VIRSH_SENDKEY_WAIT="${MYVM_VIRSH_SENDKEY_WAIT:-0.1}"
+
 do_build() {
   vm.build --name "$DOMAIN" --osinfo solaris10 \
     --vcpus 1 --memory 2048 --disk size=20 --video qxl \
-    --network bridge='br0',mac='52:54:00:00:05:01' \
+    --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/sol-10-u11-ga-x86-dvd.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
@@ -94,12 +97,17 @@ do_setup() {
 
   do_attach_cdrom
   sleep 15
+  enter 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
+
+  begin_shell 'Install bash'
+  - 'yes | pkgadd -d /mnt/Solaris_10/Product/ SUNWbash'
+  end_shell
+  waitfor "Install bash success" "Install bash failure"
 
   begin_shell 'Install packages'
-  - 'mount -F hsfs -o ro /dev/dsk/c0t1d0s0 /mnt'
   - 'cd /mnt/Solaris_10/Product/'
   - 'yes | pkgadd -d . SUNWsshcu SUNWsshdr SUNWsshdu SUNWsshr SUNWsshu'
-  - 'yes | pkgadd -d . SUNWbash SUNWless SUNWdoc SUNWman SUNWjman'
+  - 'yes | pkgadd -d . SUNWless SUNWdoc SUNWman SUNWjman'
   end_shell
   waitfor "Install packages success" "Install packages failure"
 
@@ -119,6 +127,18 @@ do_setup() {
   waitfor "Setup sshd success" "Setup sshd failure"
 
   enter 'svcadm disable sendmail sendmail-client'
+
+  begin_shell 'Add user'
+  - mkdir -p /export/home
+  - groupadd "$USER_NAME"
+  - useradd -g "$USER_NAME" -m -d "/export/home/$USER_NAME" -s /usr/bin/bash "$USER_NAME"
+  end_shell
+  waitfor "Add user success" "Add user failure"
+
+  enter "passwd $USER_NAME"
+  prompt 'New Password' "$USER_PASS" {ENTER}
+  prompt 'Re-enter new Password' "$USER_PASS" {ENTER}
+
   enter 'shutdown -y -g0 -i5'
 
   timeout 600 'Shutdown'

@@ -139,8 +139,9 @@ exalias - enter
 
 begin_shell() {
   echo "exec shell: $1"
-  enter "sh -s - '$1' << 'MYVM_SHELL_HEREDOC'"
-  enter '( set -e'
+  enter "sh << 'MYVM_SHELL_HEREDOC'"
+  enter "set -- '$1'"
+  enter "( set -e"
 }
 
 end_shell() {
@@ -238,19 +239,15 @@ esac
 
 SHRC=$1
 DOMAIN="${1%/*}${1#*/}" && DOMAIN=${DOMAIN%.shrc}
-HOSTNAME="vm-$(echo "$DOMAIN" | tr . -)"
+HOSTNAME="$(echo "$DOMAIN" | tr . -)"
 shift
 
+for i in "./myvmrc" "$HOME/.myvmrc" "$HOME/.config/myvmrc"; do
+  [ -f "$i" ] || continue
+  echo "Configuration file loaded from $i."
+  . "$i"
+done
 echo "myvm (Domain: $DOMAIN, Hostname: $HOSTNAME)"
-
-CONFIG=
-[ -f "$HOME/.myvm" ] && CONFIG="$HOME/.myvm"
-[ -f "$HOME/.config/myvm" ] && CONFIG="$HOME/.config/myvm"
-
-if [ "$CONFIG" ]; then
-  echo "Configuration file loaded from $CONFIG."
-  . "$CONFIG"
-fi
 echo
 
 # The following braces make it safe to modify the script during execution

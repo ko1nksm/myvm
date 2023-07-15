@@ -1,7 +1,7 @@
 do_build() {
   vm.build --name "$DOMAIN" --osinfo openbsd6.9 \
     --vcpus 1 --memory 2048 --disk size=10 \
-    --network bridge='br0',mac='52:54:00:00:03:32' \
+    --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/install69.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 }

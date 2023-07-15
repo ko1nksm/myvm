@@ -1,6 +1,7 @@
 do_build() {
   vm.build --name "$DOMAIN" --osinfo detect=on,require=off \
-    --vcpus 1 --memory 256 --disk size=10 --network bridge='br0' \
+    --vcpus 1 --memory 256 --disk size=10 \
+    --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/minix_R3.3.0-588a35b.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 

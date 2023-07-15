@@ -2,7 +2,7 @@ do_build() {
   # Connect CDROM to SCSI interface because IDE interface causes ATAPI error
   vm.build --name "$DOMAIN" --osinfo openbsd7.2 \
     --vcpus 1 --memory 2048 --disk size=10 \
-    --network bridge='br0',mac='52:54:00:00:03:36' \
+    --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --controller type=scsi,driver.iommu=on --boot cdrom \
     --disk "$DISK_DIR/install73.iso",device=cdrom,bus=scsi \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
