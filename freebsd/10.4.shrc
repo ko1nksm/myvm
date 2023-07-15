@@ -1,0 +1,77 @@
+do_build() {
+  vm.build --name "$DOMAIN" --osinfo freebsd10.4 \
+    --vcpus 1 --memory 2048 --disk size=10 \
+    --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
+    --cdrom "$DISK_DIR/FreeBSD-10.4-RELEASE-amd64-disc1.iso" \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+
+  prompt "Boot Multi User" {ENTER}
+}
+
+do_setup() {
+  prompt "Would you like to begin an installation" I
+  prompt "standard 'US' keyboard map" {ENTER} # default keymap
+  prompt "Please choose a hostname for this machine" "$HOSTNAME" {ENTER}
+  prompt "Choose optional system components to install" {ENTER}
+  prompt "How would you like to partition your disk" {DOWN} {ENTER}
+  prompt "Create partitions for FreeBSD" A # Auto
+  prompt "Would you like to use this entire disk" {ENTER} # Entire Disk
+  prompt "Select a partition scheme" {ENTER} # MBR
+  prompt "Create partitions for FreeBSD" F # Finish
+  prompt "commit your changes" {ENTER}
+
+  timeout 120 'Archive Extraction'
+
+  waitfor 'Please select a password for the system management account (root)'
+  {
+    prompt "New Password" "$ROOT_PASS" {ENTER}
+    prompt "Retype New Password" "$ROOT_PASS" {ENTER}
+  }
+
+  prompt "Please select a network interface" {ENTER}
+  prompt "configure IPv4" y
+  prompt "DHCP to configure this" y
+  prompt "configure IPv6" y
+  prompt "stateless address" y
+  prompt "Resolver Configuration" {ENTER}
+  prompt "Select a region" {END} {ENTER} # UTC
+  prompt "Does the abbreviation UTC look reasonable" y
+  prompt "Choose the services you would like to be started at boot" {ENTER}
+  prompt "users to the installed" y
+
+  waitfor "Add Users"
+  {
+    prompt 'Username' "$USER_NAME" {ENTER}
+    prompt 'Full name' "$USER_FULL_NAME" {ENTER}
+    prompt 'Uid' {ENTER}
+    prompt 'Login group' {ENTER}
+    prompt 'Invite user into other groups' {ENTER}
+    prompt 'Login class' {ENTER}
+    prompt 'Shell' {ENTER}
+    prompt 'Home directory' {ENTER}
+    prompt 'Home directory permissions' {ENTER}
+    prompt 'Use password-based authentication' {ENTER} # yes
+    prompt 'Use an empty password' {ENTER} # no
+    prompt 'Use a random password' {ENTER} # no
+    prompt 'Enter password' "$USER_PASS" {ENTER}
+    prompt 'Enter password again' "$USER_PASS" {ENTER}
+    prompt 'Lock out the account after creation' {ENTER} # no
+    prompt 'OK? (yes/no)' yes {ENTER}
+    prompt "Add another user" no {ENTER}
+  }
+
+  prompt "Setup of your FreeBSD system is nearly complete" {ENTER}
+  prompt "The installation is now finished" {ENTER}
+  prompt "Would you like to reboot into the installed system now" R # Reboot
+
+  vm.vnc disable
+}
+
+spelling_correction() {
+  sed '
+    s/ i$//g
+    s/conf igure/configure/g
+    s/DK?/OK?/g
+    s/IPub/IPv6/g
+  ' | tr '"' "'"
+}
