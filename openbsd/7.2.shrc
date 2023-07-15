@@ -47,7 +47,8 @@ do_setup() {
 
   timeout 300 'Rebooting'
 
-  prompt "login:" root "$ROOT_PASS" {ENTER}
+  prompt "login:" root {ENTER}
+  prompt "Password:" "$ROOT_PASS" {ENTER}
   sendkey "shutdown -p now" {ENTER}
 
   vm.vnc disable
