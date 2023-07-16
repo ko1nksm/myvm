@@ -2,7 +2,7 @@
 export MYVM_VIRSH_SENDKEY_WAIT="${MYVM_VIRSH_SENDKEY_WAIT:-0.1}"
 
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo solaris10 \
+  virt-install --name "$DOMAIN" --osinfo solaris10 \
     --vcpus 1 --memory 2048 --disk size=20 --video qxl \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/sol-10-u11-ga-x86-dvd.iso" \

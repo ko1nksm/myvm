@@ -1,7 +1,7 @@
 do_build() {
   # The amd64 image does not boot.
   # FreeBSD-9.3-RELEASE-amd64-disc1.iso
-  vm.build --name "$DOMAIN" --osinfo freebsd9.3 \
+  virt-install --name "$DOMAIN" --osinfo freebsd9.3 \
     --vcpus 1 --memory 2048 --disk size=10 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/FreeBSD-9.3-RELEASE-i386-disc1.iso" \

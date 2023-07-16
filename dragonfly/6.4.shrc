@@ -2,7 +2,7 @@ USE_UEFI=false # UEFI does not boot
 
 do_build() {
   # See: https://www.dragonflybsd.org/docs/docs/howtos/kvmguest/
-  vm.build --name "$DOMAIN" --osinfo dragonflybsd5.6 \
+  virt-install --name "$DOMAIN" --osinfo dragonflybsd5.6 \
     --vcpus 1 --memory 2048 --disk size=10 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/dfly-x86_64-6.4.0_REL.iso" \

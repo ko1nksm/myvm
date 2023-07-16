@@ -1,11 +1,7 @@
-vm_build() {
-  vm_install "$@"
-  vm_vnc "$1" display
-}
-
-vm_install() {
-  shift
-  virt-install "$@"
+alias virt-install="virt_install"
+virt_install() {
+  "virt-install" "$@"
+  vm.vnc display
 }
 
 vm_stop() {

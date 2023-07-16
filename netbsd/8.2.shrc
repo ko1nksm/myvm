@@ -1,5 +1,5 @@
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo netbsd8.2 \
+  virt-install --name "$DOMAIN" --osinfo netbsd8.2 \
     --vcpus 1 --memory 2048 --disk size=10 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/NetBSD-8.2-amd64.iso" \

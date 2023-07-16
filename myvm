@@ -31,10 +31,10 @@ if (export PATH=/dev/null; shopt -s expand_aliases 2>/dev/null); then
   shopt -s expand_aliases
 fi
 
-. ./lib/vm.sh
-for i in build stop restart setmem vnc attach_disk detach_disk; do
+for i in stop restart setmem vnc attach_disk detach_disk; do
   eval "alias vm.$i='vm_$i \"\$DOMAIN\"'"
 done
+. ./lib/vm.sh
 
 exalias() {
   if (eval "function '$1'() { :; }") >/dev/null 2>&1; then

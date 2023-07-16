@@ -1,5 +1,5 @@
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo freebsd11.4 \
+  virt-install --name "$DOMAIN" --osinfo freebsd11.4 \
     --vcpus 1 --memory 2048 --disk size=10 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/FreeBSD-11.4-RELEASE-amd64-disc1.iso" \

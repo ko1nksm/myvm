@@ -54,7 +54,6 @@ keys:
 
 ## Functions to manipulate virtual machines
 
-- `vm.build` Create a virtual machine
 - `vm.stop` Stop the virtual machine
 - `vm.restart` Wait for the virtual machine to stop, then restart it
 - `vm.setmem` Set virtual machine memory

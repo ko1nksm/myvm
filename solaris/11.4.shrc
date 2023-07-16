@@ -1,5 +1,5 @@
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo solaris11 \
+  virt-install --name "$DOMAIN" --osinfo solaris11 \
     --vcpus 1 --memory 3072 --disk size=20 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/sol-11_4-text-x86.iso" \

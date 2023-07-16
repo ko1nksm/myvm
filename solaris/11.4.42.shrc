@@ -1,7 +1,7 @@
 do_build() {
   # Increase the amount of memory only during installation
   # due to insufficient memory
-  vm.build --name "$DOMAIN" --osinfo solaris11 \
+  virt-install --name "$DOMAIN" --osinfo solaris11 \
     --vcpus 1 --memory 6144 --disk size=20 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/sol-11_4_42-text-x86-V1019840-01.iso" \

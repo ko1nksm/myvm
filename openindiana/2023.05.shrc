@@ -1,5 +1,5 @@
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo openindiana \
+  virt-install --name "$DOMAIN" --osinfo openindiana \
     --vcpus 1 --memory 2048 --disk size=20 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
     --cdrom "$DISK_DIR/OI-hipster-text-20230502.iso" \
