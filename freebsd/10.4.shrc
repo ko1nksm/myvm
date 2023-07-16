@@ -45,7 +45,7 @@ do_setup() {
     prompt 'Full name' "$USER_FULL_NAME" {ENTER}
     prompt 'Uid' {ENTER}
     prompt 'Login group' {ENTER}
-    prompt 'Invite user into other groups' {ENTER}
+    prompt 'Invite user into other groups' wheel {ENTER}
     prompt 'Login class' {ENTER}
     prompt 'Shell' {ENTER}
     prompt 'Home directory' {ENTER}
@@ -61,7 +61,11 @@ do_setup() {
   }
 
   prompt "Setup of your FreeBSD system is nearly complete" {ENTER}
-  prompt "The installation is now finished" {ENTER}
+  prompt "The installation is now finished" {RIGHT} {ENTER}
+
+  enter 'echo "PermitRootLogin yes" >> /etc/ssh/sshd_config'
+  enter 'exit'
+
   prompt "Would you like to reboot into the installed system now" R # Reboot
 
   vm.vnc disable

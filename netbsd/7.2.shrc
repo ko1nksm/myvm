@@ -1,9 +1,11 @@
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo netbsd9.0 \
+  vm.build --name "$DOMAIN" --osinfo netbsd7.2 \
     --vcpus 1 --memory 2048 --disk size=10 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
-    --cdrom "$DISK_DIR/NetBSD-9.3-amd64.iso" \
+    --cdrom "$DISK_DIR/NetBSD-7.2-amd64.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
+
+  prompt "Install NetBSD" {ENTER}
 }
 
 do_setup() {
@@ -13,12 +15,15 @@ do_setup() {
   prompt "Shall we continue?" b {ENTER} # Yes
 
   prompt "Available disks" {ENTER}
-  prompt "partitioning scheme" {ENTER}
   prompt "This disk matches the following BIOS disk:" {ENTER}
-  prompt "NetBSD partitions" b {ENTER} # Use default partition sizes
-  prompt "Partition sizes ok" {ENTER}
+  prompt "Use the entire disk" b {ENTER}
+  prompt "Do you want to install the NetBSD bootcode?" {ENTER}
+  prompt "Use existing partition sizes" b {ENTER}
+
+  prompt "This is your last chance to change them" {ENTER}
+  prompt "Please enter a name for your NetBSD disk" {ENTER}
   prompt "Shall we continue?" b {ENTER} # Yes
-  prompt "Bootblocks selection" {ENTER}
+  prompt "Bootblocks selection" {ENTER} {ENTER}
 
   prompt "Select your distribution" c {ENTER} # Minimal installation
   prompt "Install from" {ENTER} # CD-ROM / DVD / install image media

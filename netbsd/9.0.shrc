@@ -13,6 +13,7 @@ do_setup() {
   prompt "Keyboard type" {ENTER}
   prompt "NetBSD * Install System" {ENTER}
   prompt "Shall we continue?" b {ENTER} # Yes
+
   prompt "Available disks" {ENTER}
   prompt "partitioning scheme" {ENTER}
   prompt "This disk matches the following BIOS disk:" {ENTER}
@@ -20,6 +21,7 @@ do_setup() {
   prompt "Partition sizes ok" {ENTER}
   prompt "Shall we continue?" b {ENTER} # Yes
   prompt "Bootblocks selection" {ENTER}
+
   prompt "Select your distribution" c {ENTER} # Minimal installation
   prompt "Install from" {ENTER} # CD-ROM / DVD / install image media
   prompt "The extraction of the selected sets for NetBSD-* is complete." {ENTER}

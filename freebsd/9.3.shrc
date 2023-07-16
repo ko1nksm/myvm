@@ -1,11 +1,13 @@
 do_build() {
-  vm.build --name "$DOMAIN" --osinfo freebsd12.4 \
+  # The amd64 image does not boot.
+  # FreeBSD-9.3-RELEASE-amd64-disc1.iso
+  vm.build --name "$DOMAIN" --osinfo freebsd9.3 \
     --vcpus 1 --memory 2048 --disk size=10 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
-    --cdrom "$DISK_DIR/FreeBSD-12.4-RELEASE-amd64-disc1.iso" \
+    --cdrom "$DISK_DIR/FreeBSD-9.3-RELEASE-i386-disc1.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
-  prompt "Boot Multi user" {ENTER}
+  prompt "Boot Multi User" {ENTER}
 }
 
 do_setup() {
@@ -16,7 +18,6 @@ do_setup() {
   prompt "How would you like to partition your disk" {DOWN} {ENTER}
   prompt "Create partitions for FreeBSD" A # Auto
   prompt "Would you like to use this entire disk" {ENTER} # Entire Disk
-  prompt "Select a partition scheme" {ENTER} # MBR
   prompt "Create partitions for FreeBSD" F # Finish
   prompt "commit your changes" {ENTER}
 
@@ -34,12 +35,11 @@ do_setup() {
   prompt "configure IPv6" y
   prompt "stateless address" y
   prompt "Resolver Configuration" {ENTER}
+
+  prompt "Is this machine's CMOS clock set to UTC?" {ENTER}
   prompt "Select a region" {END} {ENTER} # UTC
   prompt "Does the abbreviation UTC look reasonable" y
-  prompt "Month Year" {ENTER} # Skip
-  prompt "Set Time" {ENTER} # Skip
   prompt "Choose the services you would like to be started at boot" {ENTER}
-  prompt "Choose system security hardening options" {ENTER}
   prompt "users to the installed" y
 
   waitfor "Add Users"
@@ -64,9 +64,10 @@ do_setup() {
   }
 
   prompt "Setup of your FreeBSD system is nearly complete" {ENTER}
-  prompt "The installation is now finished" {RIGHT} {ENTER}
+  prompt "The installation is now finished" {ENTER} # No
 
   enter 'echo "PermitRootLogin yes" >> /etc/ssh/sshd_config'
+  enter 'echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config'
   enter 'exit'
 
   prompt "Would you like to reboot into the installed system now" R # Reboot
@@ -76,8 +77,10 @@ do_setup() {
 
 spelling_correction() {
   sed '
+    s/ i$//g
     s/conf igure/configure/g
     s/DK?/OK?/g
     s/IPub/IPv6/g
+    s/machine s/machine"s/g
   ' | tr '"' "'"
 }
