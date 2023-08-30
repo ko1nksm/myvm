@@ -238,7 +238,9 @@ case ${1:-} in
 esac
 
 SHRC=$1
-DOMAIN="${1%/*}${1#*/}" && DOMAIN=${DOMAIN%.shrc}
+DOMAIN="${1#"${1%/*/*}/"}"
+DOMAIN="${DOMAIN%/*}${DOMAIN#*/}"
+DOMAIN=${DOMAIN%.shrc}
 HOSTNAME="$(echo "$DOMAIN" | tr . -)"
 shift
 
