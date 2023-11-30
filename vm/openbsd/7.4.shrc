@@ -1,0 +1,60 @@
+do_build() {
+  # Connect CDROM to SCSI interface because IDE interface causes ATAPI error
+  virt-install --name "$DOMAIN" --osinfo openbsd7.2 \
+    --vcpus 1 --memory 2048 --disk size=10 \
+    --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
+    --controller type=scsi,driver.iommu=on --boot cdrom \
+    --disk "$DISK_DIR/install74.iso",device=cdrom,bus=scsi \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+  vm.detach_disk "/var/isos/install74.iso"
+}
+
+do_setup() {
+  prompt "Welcome to the OpenBSD" I {ENTER} # Install
+  prompt "Choose your keyboard layout" {ENTER}
+  prompt "System hostname" "$HOSTNAME" {ENTER}
+  prompt "network interface" {ENTER}
+  prompt "IPv4 address for" autoconf {ENTER}
+  prompt "IPv6 address for" autoconf {ENTER}
+  prompt "Network interface to configure?" {ENTER}
+  prompt "Password for root account? (will not echo)" "$ROOT_PASS" {ENTER}
+  prompt "Password for root account? (again)" "$ROOT_PASS" {ENTER}
+  prompt "Start sshd" yes {ENTER}
+  prompt "Do you expect to run the X Window System" no {ENTER}
+  prompt "Change the default console to" no {ENTER}
+  prompt "Setup a user" "$USER_NAME" {ENTER}
+  prompt "Full name for * user?" "$USER_FULL_NAME" {ENTER}
+  prompt "Password for * user? (will not echo)" "$USER_PASS" {ENTER}
+  prompt "Password for * user? (again)" "$USER_PASS" {ENTER}
+  prompt "Allow root ssh login" yes {ENTER}
+  prompt "What timezone are you in" UTC {ENTER}
+  prompt "Which disk is the root disk" {ENTER}
+  prompt "Encrypt the root disk" no {ENTER}
+  prompt 'Use (W)hole disk MBR' {ENTER}
+  prompt 'create (C)ustom layout?' c {ENTER} # Custom layout
+  {
+    sendkey z {ENTER} # delete all partitions
+    sendkey "a a" {ENTER}x2 "8G" {ENTER}x2 / {ENTER}
+    sendkey "a b" {ENTER}x3 swap {ENTER}
+    sendkey "p m" {ENTER} q {ENTER} y {ENTER}
+  }
+  prompt "install the sets" {ENTER}
+  prompt "Pathname to the sets" {ENTER}
+  prompt "Select sets by entering a set name" "-game* -x*" {ENTER} "done" {ENTER}
+  prompt "Continue without verification" yes {ENTER}
+  timeout 300 'Installation'
+  prompt "Location of sets" "done" {ENTER}
+  timeout 300 'Initialization'
+  prompt "(R)eboot?" halt {ENTER}
+
+  waitfor "syncing disks"
+  vm.stop
+  vm.vnc disable
+}
+
+spelling_correction() {
+  sed '
+    s/IPub6/IPv6/g
+    s/(Clustom/(C)ustom/g
+  '
+}

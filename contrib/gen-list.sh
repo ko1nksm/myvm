@@ -11,7 +11,7 @@ usage() {
 bsd_family_tree() {
   # URL: https://cgit.freebsd.org/src/plain/share/misc/bsd-family-tree"
   cat bsd-family-tree
-  echo "FreeBSD 14.0 Upcoming [FBD]"
+  # echo "FreeBSD 15.0 Upcoming [FBD]"
 }
 
 bsd_list() {
@@ -34,6 +34,7 @@ Solaris11.3         ${PREFIX}solaris11-3         10.0.5.2  52:54:00:00:05:02
 Solaris11.4         ${PREFIX}solaris11-4         10.0.5.3  52:54:00:00:05:03
 Solaris11.4.42      ${PREFIX}solaris11-4-42      10.0.5.4  52:54:00:00:05:04
 OpenIndiana2023.05  ${PREFIX}openindiana2023-05  10.0.6.1  52:54:00:00:06:01
+OpenIndiana2023.10  ${PREFIX}openindiana2023-10  10.0.6.2  52:54:00:00:06:02
 Minix3.3.0          ${PREFIX}minix3-3-0          10.0.7.1  52:54:00:00:07:01
 HERE
 }

@@ -2,7 +2,7 @@ do_build() {
   virt-install --name "$DOMAIN" --osinfo freebsd13.1 \
     --vcpus 1 --memory 2048 --disk size=10 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
-    --cdrom "$DISK_DIR/FreeBSD-14.0-CURRENT-amd64-20230622-b95d2237af40-263748-disc1.iso" \
+    --cdrom "$DISK_DIR/FreeBSD-14.0-RELEASE-amd64-disc1.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 
   prompt "Boot Installer" {ENTER}

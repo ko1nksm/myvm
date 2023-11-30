@@ -29,7 +29,13 @@ do_setup() {
   timeout 300 'Base system installation'
 
   prompt 'Scan extra installation media?' {ENTER} # no
-  prompt 'Use a network mirror?' {ENTER} # no
+  prompt 'Use a network mirror?' {LEFT} {ENTER} # yes
+  prompt 'Debian archive mirror country' {ENTER}
+  prompt 'deb.debian.org' {ENTER}
+
+  timeout 300 'Select and install software'
+
+  prompt 'HTTP proxy information' {ENTER} # none
   prompt 'Participate in the package usage survey?' {ENTER} # no
   prompt 'Choose software to install:' {SPACE} {DOWN} {SPACE} {PAGEDOWN} {UP} {SPACE} {ENTER}
   prompt 'Install the GRUB boot loader to your primary drive?' {ENTER} # yes

@@ -2,7 +2,7 @@ do_build() {
   virt-install --name "$DOMAIN" --osinfo netbsd9.0 \
     --vcpus 1 --memory 2048 --disk size=10 \
     --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
-    --cdrom "$DISK_DIR/NetBSD-9.3-amd64.iso" \
+    --cdrom "$DISK_DIR/NetBSD-10.0_RC1-amd64.iso" \
     --graphics vnc,listen='0.0.0.0' --noautoconsole
 }
 
@@ -21,24 +21,22 @@ do_setup() {
   prompt "Bootblocks selection" {ENTER}
 
   prompt "Select your distribution" d {ENTER} # Custom installation
-  prompt "Distribution set Selected" h {ENTER} x {ENTER} # Manual pages
+  prompt "Distribution set Selected" i {ENTER} x {ENTER} # Manual pages
   prompt "Install from" {ENTER} # CD-ROM / DVD / install image media
   prompt "The extraction of the selected sets for NetBSD-* is complete." {ENTER}
+
+  prompt "Changing local password for root" "$ROOT_PASS" {ENTER}
+  prompt "Retype new password" "$ROOT_PASS" {ENTER}
 
   {
     prompt "Configure the additional items as needed." a {ENTER} # Configure network
     prompt "Which network device would you like to use?" {ENTER}
     prompt "Network media type" {ENTER} # autoselect
     prompt "Perform autoconfiguration?" {ENTER} # Yes
-    prompt "The following are the values you entered." {ENTER} # Yes
+    prompt "Your host name" "$HOSTNAME" {ENTER} # Yes
+    prompt "Your DNS domain" {ENTER} # Yes
+    prompt "Are they OK" {ENTER} # Yes
     prompt "do you want it installed in" {ENTER} # Yes
-  }
-
-  {
-    prompt "Configure the additional items as needed." d {ENTER} # Change root password
-    prompt "Do you want to set a root password for the system now?" {ENTER} # Yes
-    prompt "New password" "$ROOT_PASS" {ENTER}
-    prompt "Retype new password" "$ROOT_PASS" {ENTER}
   }
 
   {

@@ -1,0 +1,50 @@
+do_build() {
+  virt-install --name "$DOMAIN" --osinfo openindiana \
+    --vcpus 1 --memory 2048 --disk size=20 \
+    --network bridge='br0'"${MACADDR:+,mac=$MACADDR}" \
+    --cdrom "$DISK_DIR/OI-hipster-text-20231027.iso" \
+    --graphics vnc,listen='0.0.0.0' --noautoconsole
+
+  prompt 'Boot Multi User' {ENTER}
+}
+
+do_setup() {
+  prompt 'To select the keyboard layout, enter a number' {ENTER}
+  prompt 'To select the language you wish to use, enter a number' {ENTER}
+  prompt 'Install OpenlIndiana' {ENTER}
+  prompt 'Welcome to OpenIndiana' {F2}
+  prompt 'Where should OpenIndiana be installed?' {F2}
+  prompt 'the loss of all existing data' {RIGHT} {ENTER}
+  prompt 'Use a partition of the disk (MBR)' {F2} # Use the whole disk
+  prompt 'Computer Name' {BS}x30 "$HOSTNAME" {TAB} {F2}
+  prompt 'Time Zone: Regions' {F2} # UTC/GMT
+  prompt 'Date and Time' {F2}
+  waitfor 'System Root Password'
+  {
+    sendkey "$ROOT_PASS" {TAB} "$ROOT_PASS" {TAB}
+    sendkey "$USER_FULL_NAME" {TAB} "$USER_NAME" {TAB}
+    sendkey "$USER_PASS" {TAB} "$USER_PASS" {F2}
+  }
+  prompt 'Installation Summary' {F2}
+
+  timeout 600 'Installation'
+
+  prompt 'Installation Complete' {F8} # Reboot
+
+  vm.restart
+
+  timeout 300 'Startup'
+
+  prompt 'console login' "$USER_NAME" {ENTER}
+  prompt "Password:" "$USER_PASS" {ENTER}
+  sendkey 'sudo poweroff' {ENTER}
+  prompt "Password:" "$USER_PASS" {ENTER}
+
+  vm.vnc disable
+}
+
+spelling_correction() {
+  sed '
+    s/iassword/Password/g
+  '
+}
