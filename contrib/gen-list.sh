@@ -11,7 +11,7 @@ usage() {
 bsd_family_tree() {
   # URL: https://cgit.freebsd.org/src/plain/share/misc/bsd-family-tree"
   cat bsd-family-tree
-  # echo "FreeBSD 15.0 Upcoming [FBD]"
+  echo "FreeBSD 15.0 Upcoming [FBD]"
 }
 
 bsd_list() {
